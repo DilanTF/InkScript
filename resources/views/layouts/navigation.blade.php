@@ -15,6 +15,23 @@
                     <x-nav-link :href="route('stories.index')" :active="request()->routeIs('stories.*')">
                         {{ __('Mis Historias') }}
                     </x-nav-link>
+
+                    <x-nav-link :href="route('stories.stats')" :active="request()->routeIs('stories.stats')">
+                        {{ __('Estadísticas') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('shop.index')" :active="request()->routeIs('shop.*')">
+                        {{ __('Tienda') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.*')" class="relative">
+                        {{ __('Carrito') }}
+                        @if(session('cart') && count(session('cart')) > 0)
+                            <span class="absolute -top-1 -right-4 inline-flex items-center justify-center px-2 py-1 text-[10px] font-bold leading-none text-white bg-indigo-600 rounded-full shadow-sm">
+                                {{ count(session('cart')) }}
+                            </span>
+                        @endif
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -38,10 +55,12 @@
                             {{ __('Profile') }}
                         </x-dropdown-link>
 
-                        <!-- Authentication -->
+                        <x-dropdown-link :href="route('orders.index')">
+                            {{ __('Mis Pedidos') }}
+                        </x-dropdown-link>
+
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-
                             <x-dropdown-link :href="route('logout')"
                                     onclick="event.preventDefault();
                                                 this.closest('form').submit();">
@@ -67,8 +86,16 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
+            <x-responsive-nav-link :href="route('stories.index')" :active="request()->routeIs('stories.*')">
+                {{ __('Mis Historias') }}
+            </x-responsive-nav-link>
+            
+            <x-responsive-nav-link :href="route('shop.index')" :active="request()->routeIs('shop.index')">
+                {{ __('Tienda') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.index')">
+                {{ __('Carrito') }} ({{ session('cart') ? count(session('cart')) : 0 }})
             </x-responsive-nav-link>
         </div>
 
@@ -84,10 +111,12 @@
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
 
-                <!-- Authentication -->
+                <x-responsive-nav-link :href="route('orders.index')">
+                    {{ __('Mis Pedidos') }}
+                </x-responsive-nav-link>
+
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-
                     <x-responsive-nav-link :href="route('logout')"
                             onclick="event.preventDefault();
                                         this.closest('form').submit();">

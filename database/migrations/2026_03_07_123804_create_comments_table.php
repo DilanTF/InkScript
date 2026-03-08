@@ -6,17 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Crea la tabla de comentarios vinculada a capítulos.
+     */
     public function up(): void
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('story_id')->constrained()->onDelete('cascade');
+            $table->foreignId('chapter_id')->constrained()->onDelete('cascade');
             $table->text('content');
             $table->timestamps();
         });
     }
 
+    /**
+     * Revierte la migración.
+     */
     public function down(): void
     {
         Schema::dropIfExists('comments');

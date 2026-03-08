@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Story;
+use App\Models\Book;
+use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,7 +17,7 @@ class StoryController extends Controller
     public function index()
     {
         /** @var User $user */
-        $user = auth()->user();
+        $user = Auth::user();
         
         // Ahora el editor reconocerá que $user tiene la relación 'stories'
         $stories = $user->stories; 
@@ -44,7 +46,7 @@ class StoryController extends Controller
 
         // 2. Obtención del usuario y creación de la relación
         /** @var User $user */
-        $user = auth()->user();
+        $user = Auth::user();
 
         $user->stories()->create([
             'title' => $request->title,
@@ -91,5 +93,28 @@ class StoryController extends Controller
     {
         $story->delete();
         return redirect()->route('stories.index')->with('success', 'Historia eliminada correctamente.');
+    }
+
+    public function stats()
+    {
+        $authorId = Auth::id();
+
+        // 1. Obtenemos todos los libros que pertenecen a este autor
+        $myBooks = Book::where('user_id', $authorId)->get();
+        $myBookIds = $myBooks->pluck('id');
+
+        // 2. Buscamos los ítems de pedidos que correspondan a esos libros
+        $sales = OrderItem::whereIn('book_id', $myBookIds)
+            ->with('book')
+            ->get();
+
+        // 3. Calculamos totales
+        $totalEarnings = $sales->sum(function($item) {
+            return $item->price * $item->quantity;
+        });
+        
+        $totalSold = $sales->sum('quantity');
+
+        return view('stories.stats', compact('myBooks', 'sales', 'totalEarnings', 'totalSold'));
     }
 }

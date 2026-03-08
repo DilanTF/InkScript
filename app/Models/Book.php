@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Book extends Model
 {
@@ -15,7 +16,8 @@ class Book extends Model
         'stock', 
         'image', 
         'story_id', 
-        'user_id'
+        'user_id',
+        'is_digital'
     ];
 
     /**
@@ -32,5 +34,14 @@ class Book extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Relación con los ítems de pedidos.
+     * Permite ver cuántas veces se ha vendido este libro.
+     */
+    public function orderItems(): HasMany
+    {
+        return $this->hasMany(OrderItem::class);
     }
 }

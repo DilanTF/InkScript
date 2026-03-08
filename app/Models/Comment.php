@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Comment extends Model
 {
     // Campos que permitimos rellenar
-    protected $fillable = ['content', 'user_id', 'story_id'];
+    protected $fillable = ['content', 'user_id', 'chapter_id'];
 
     /**
      * Un comentario pertenece a un usuario (el autor del comentario).
@@ -19,10 +19,10 @@ class Comment extends Model
     }
 
     /**
-     * Un comentario pertenece a una historia.
+     * Un comentario pertenece a un capítulo.
      */
-    public function story(): BelongsTo
+    public function chapter(): BelongsTo
     {
-        return $this->belongsTo(Story::class);
+        return $this->belongsTo(Chapter::class);
     }
 }

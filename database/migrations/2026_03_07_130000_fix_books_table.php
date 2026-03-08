@@ -32,6 +32,11 @@ return new class extends Migration
             if (!Schema::hasColumn('books', 'user_id')) {
                 $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
             }
+
+            // 5. Añadimos el campo is_digital
+            if (!Schema::hasColumn('books', 'is_digital')) {
+                $table->boolean('is_digital')->default(false)->after('stock');
+            }
         });
     }
 
@@ -44,6 +49,7 @@ return new class extends Migration
             $table->dropForeign(['story_id']);
             $table->dropForeign(['user_id']);
             $table->dropColumn(['description', 'genre', 'story_id', 'user_id']);
+            $table->dropColumn(['description', 'genre', 'story_id', 'user_id', 'is_digital']);
         });
     }
 };

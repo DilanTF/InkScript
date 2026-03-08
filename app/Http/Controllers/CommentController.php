@@ -2,29 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Story;
-use App\Models\Comment;
 use Illuminate\Http\Request;
+use App\Models\Comment;
+use App\Models\Chapter; // Importante para la relación
+use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
-    /**
-     * Guarda un nuevo comentario en la base de datos.
-     */
-    public function store(Request $request, Story $story)
+    public function store(Request $request, Chapter $chapter) // Laravel busca el capítulo por ti
     {
-        // 1. Validamos que el comentario no esté vacío
+        // Validamos el contenido del comentario
         $request->validate([
             'content' => 'required|string|max:1000',
         ]);
 
-        // 2. Creamos el comentario vinculado al usuario actual y a la historia
-        $story->comments()->create([
+        // Usamos la relación para crear el comentario (más limpio)
+        $chapter->comments()->create([
             'content' => $request->content,
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
         ]);
 
-        // 3. Volvemos atrás con un mensaje de éxito
-        return back()->with('success', '¡Comentario publicado!');
+        return back()->with('success', '¡Tu comentario ha sido publicado!');
     }
 }
