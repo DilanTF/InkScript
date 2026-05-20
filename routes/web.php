@@ -9,43 +9,48 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 
-// 1. Público (Sin login)
-Route::get('/', function () { return view('welcome'); });
+// 1. Ruta principal (Portada) -> REDIRIGE AL LOGIN
+Route::get('/', function () {
+    return redirect()->route('login');
+});
 
-// Tienda (Lectura y compra)
-Route::get('/shop', [BookController::class, 'index'])->name('shop.index');
-Route::get('/shop/book/{book}', [BookController::class, 'show'])->name('shop.show');
+// 2. Rutas de Historias protegidas por Autenticación y Rol de Autor
+Route::resource('stories', StoryController::class)->middleware(['auth', 'role.author']);
 
-// 2. Usuarios Autenticados
+// 3. Dashboard estándar
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+// 4. Rutas del Perfil de Usuario y Carrito/Pedidos
 Route::middleware('auth')->group(function () {
-    
-    // Perfil y Dashboard
-    Route::get('/dashboard', function () { return view('dashboard'); })->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    // Carrito y Pedidos
-    Route::prefix('cart')->name('cart.')->group(function () {
-        Route::get('/', [CartController::class, 'index'])->name('index');
-        Route::post('/add', [CartController::class, 'add'])->name('add');
-        Route::post('/remove', [CartController::class, 'remove'])->name('remove');
-        Route::post('/clear', [CartController::class, 'clear'])->name('clear');
-        Route::post('/update', [CartController::class, 'update'])->name('update');
-    });
+    
+    // Carrito
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+    Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
+    Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+    Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
+    
+    // Pedidos
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::post('/checkout', [OrderController::class, 'checkout'])->name('checkout');
-    Route::get('/my-orders', [OrderController::class, 'index'])->name('orders.index');
-
-    // COMENTARIOS: Vinculados a un capítulo
-    Route::post('/chapters/{chapter}/comments', [CommentController::class, 'store'])->name('comments.store');
 });
 
-// 3. Autores (Gestión de contenido)
-Route::middleware(['auth', 'role.author'])->group(function () {
-    Route::resource('stories', StoryController::class);
-    Route::resource('stories.chapters', ChapterController::class)->only(['create', 'store', 'show']);
-    Route::post('/stories/{story}/sell', [BookController::class, 'publishAsBook'])->name('stories.sell');
-    Route::get('/my-stats', [StoryController::class, 'stats'])->name('stories.stats')->middleware('role.author');
-});
+// Definimos la ruta de capítulos como un recurso dependiente de historias
+Route::resource('stories.chapters', ChapterController::class)->only(['create', 'store']);
+
+// Rutas de la Tienda
+Route::get('/shop', [BookController::class, 'index'])->name('shop.index');
+Route::get('/shop/book/{book}', [BookController::class, 'show'])->name('shop.show');
+
+// Ruta para vender una historia (Solo para autores)
+Route::post('/stories/{story}/sell', [BookController::class, 'publishAsBook'])->name('stories.sell');
+
+Route::post('/stories/{chapter}/comments', [CommentController::class, 'store'])->name('stories.comments.store');
 
 require __DIR__.'/auth.php';
