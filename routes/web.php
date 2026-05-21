@@ -17,10 +17,11 @@ Route::get('/', function () {
 // 2. Rutas de Historias protegidas por Autenticación y Rol de Autor
 Route::resource('stories', StoryController::class)->middleware(['auth', 'role.author']);
 
-// 3. Dashboard estándar
-Route::get('/Inicio', function () {
-    return view('inicio');
-})->middleware(['auth', 'verified'])->name('inicio');
+// 3. INICIO (Antiguo Dashboard)
+// La URL es /inicio, carga el archivo inicio.blade.php, pero su nombre interno sigue siendo 'dashboard'
+Route::get('/inicio', function () {
+    return view('inicio'); 
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 // 4. Rutas del Perfil de Usuario y Carrito/Pedidos
 Route::middleware('auth')->group(function () {
