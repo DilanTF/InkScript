@@ -5,37 +5,33 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+                    <a href="{{ route('inicio') }}">
+                        <img src="{{ asset('images/InkScript.png') }}" class="block h-9 w-auto" alt="InkScript Logo" />
                     </a>
                 </div>
 
-                <!-- Navigation Links -->
+                <!-- Navigation Links (Enlaces de Navegación del Menú) -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('stories.index')" :active="request()->routeIs('stories.*')">
-                        {{ __('Mis Historias') }}
+                    <!-- Enlace: Dashboard (Para todos) -->
+                    <x-nav-link :href="route('inicio')" :active="request()->routeIs('inicio')">
+                        {{ __('Inicio') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('stories.stats')" :active="request()->routeIs('stories.stats')">
-                        {{ __('Estadísticas') }}
-                    </x-nav-link>
+                    <!-- Enlace: Mis Historias (SOLO si el usuario es Autor) -->
+                    @if(auth()->user() && auth()->user()->role === 'author')
+                        <x-nav-link :href="route('stories.index')" :active="request()->routeIs('stories.*')">
+                            {{ __('Mis Historias') }}
+                        </x-nav-link>
+                    @endif
 
+                    <!-- Enlace: Tienda (Para todos) -->
                     <x-nav-link :href="route('shop.index')" :active="request()->routeIs('shop.*')">
                         {{ __('Tienda') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.*')" class="relative">
-                        {{ __('Carrito') }}
-                        @if(session('cart') && count(session('cart')) > 0)
-                            <span class="absolute -top-1 -right-4 inline-flex items-center justify-center px-2 py-1 text-[10px] font-bold leading-none text-white bg-indigo-600 rounded-full shadow-sm">
-                                {{ count(session('cart')) }}
-                            </span>
-                        @endif
                     </x-nav-link>
                 </div>
             </div>
 
-            <!-- Settings Dropdown -->
+            <!-- Settings Dropdown (Menú de Usuario arriba a la derecha) -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
@@ -52,26 +48,23 @@
 
                     <x-slot name="content">
                         <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
+                            {{ __('Mi Perfil') }}
                         </x-dropdown-link>
 
-                        <x-dropdown-link :href="route('orders.index')">
-                            {{ __('Mis Pedidos') }}
-                        </x-dropdown-link>
-
+                        <!-- Authentication (Cerrar Sesión) -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <x-dropdown-link :href="route('logout')"
                                     onclick="event.preventDefault();
                                                 this.closest('form').submit();">
-                                {{ __('Log Out') }}
+                                {{ __('Cerrar Sesión') }}
                             </x-dropdown-link>
                         </form>
                     </x-slot>
                 </x-dropdown>
             </div>
 
-            <!-- Hamburger -->
+            <!-- Hamburger (Menú móvil) -->
             <div class="-me-2 flex items-center sm:hidden">
                 <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -83,19 +76,21 @@
         </div>
     </div>
 
-    <!-- Responsive Navigation Menu -->
+    <!-- Responsive Navigation Menu (Menú desplegable móvil) -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('stories.index')" :active="request()->routeIs('stories.*')">
-                {{ __('Mis Historias') }}
-            </x-responsive-nav-link>
-            
-            <x-responsive-nav-link :href="route('shop.index')" :active="request()->routeIs('shop.index')">
-                {{ __('Tienda') }}
+            <x-responsive-nav-link :href="route('inicio')" :active="request()->routeIs('inicio')">
+                {{ __('Inicio') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.index')">
-                {{ __('Carrito') }} ({{ session('cart') ? count(session('cart')) : 0 }})
+            @if(auth()->user() && auth()->user()->role === 'author')
+                <x-responsive-nav-link :href="route('stories.index')" :active="request()->routeIs('stories.*')">
+                    {{ __('Mis Historias') }}
+                </x-responsive-nav-link>
+            @endif
+
+            <x-responsive-nav-link :href="route('shop.index')" :active="request()->routeIs('shop.*')">
+                {{ __('Tienda') }}
             </x-responsive-nav-link>
         </div>
 
@@ -108,19 +103,16 @@
 
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
+                    {{ __('Mi Perfil') }}
                 </x-responsive-nav-link>
 
-                <x-responsive-nav-link :href="route('orders.index')">
-                    {{ __('Mis Pedidos') }}
-                </x-responsive-nav-link>
-
+                <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <x-responsive-nav-link :href="route('logout')"
                             onclick="event.preventDefault();
                                         this.closest('form').submit();">
-                        {{ __('Log Out') }}
+                        {{ __('Cerrar Sesión') }}
                     </x-responsive-nav-link>
                 </form>
             </div>

@@ -18,9 +18,9 @@ Route::get('/', function () {
 Route::resource('stories', StoryController::class)->middleware(['auth', 'role.author']);
 
 // 3. Dashboard estándar
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/Inicio', function () {
+    return view('inicio');
+})->middleware(['auth', 'verified'])->name('inicio');
 
 // 4. Rutas del Perfil de Usuario y Carrito/Pedidos
 Route::middleware('auth')->group(function () {
