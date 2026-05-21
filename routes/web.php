@@ -18,9 +18,22 @@ Route::get('/', function () {
 Route::resource('stories', StoryController::class)->middleware(['auth', 'role.author']);
 
 // 3. INICIO (Antiguo Dashboard)
-// La URL es /inicio, carga el archivo inicio.blade.php, pero su nombre interno sigue siendo 'dashboard'
+// SOLUCIÓN: Buscamos los datos en la BD y los pasamos a la vista
 Route::get('/inicio', function () {
-    return view('inicio'); 
+    // A. Obras del mes (3 libros aleatorios que estén disponibles)
+    $featuredBooks = \App\Models\Book::where('status', 'available')->inRandomOrder()->limit(3)->get();
+
+    // B. Recomendaciones (2 libros distintos disponibles)
+    $recommendedBooks = \App\Models\Book::where('status', 'available')->inRandomOrder()->limit(2)->get();
+
+    // C. Historias gratis de OTROS autores (2 historias donde el user_id no sea el mío)
+    $freeStories = \App\Models\Story::with('user')->where('user_id', '!=', auth()->id())->inRandomOrder()->limit(2)->get();
+
+    // D. Mis historias (Todas mis obras creadas)
+    $myStories = \App\Models\Story::where('user_id', auth()->id())->latest()->get();
+
+    // Enviamos todas estas variables a la vista 'inicio'
+    return view('inicio', compact('featuredBooks', 'recommendedBooks', 'freeStories', 'myStories')); 
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // 4. Rutas del Perfil de Usuario y Carrito/Pedidos
@@ -52,6 +65,7 @@ Route::get('/shop/book/{book}', [BookController::class, 'show'])->name('shop.sho
 // Ruta para vender una historia (Solo para autores)
 Route::post('/stories/{story}/sell', [BookController::class, 'publishAsBook'])->name('stories.sell');
 
+// Comentarios
 Route::post('/stories/{chapter}/comments', [CommentController::class, 'store'])->name('stories.comments.store');
 
 require __DIR__.'/auth.php';
