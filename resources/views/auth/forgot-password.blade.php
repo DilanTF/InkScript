@@ -1,25 +1,80 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>InkScript - Recuperar Contraseña</title>
+    
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700,900" rel="stylesheet" />
+</head>
+<body style="margin: 0; padding: 0; background-color: #f3f4f6; font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;">
+
+    <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+        
+        <div style="position: relative; width: 100%; max-width: 1000px; background-color: white; border-radius: 1.5rem; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); border: 1px solid #e5e7eb; padding: 5rem 2rem 4rem 2rem; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 700px; box-sizing: border-box;">
+            
+            <div style="position: absolute; top: 2rem; left: 2.5rem; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; z-index: 10;">
+                <div style="width: 10rem; height: 10rem; display: flex; align-items: center; justify-content: center;">
+                    <img src="{{ asset('images/InkScript.png') }}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                </div>
+            </div>
+            
+            <!-- FORMULARIO CENTRADO -->
+            <div style="width: 100%; max-width: 550px; margin-top: 2rem;">
+                
+                <!-- TEXTO EXPLICATIVO -->
+                <div style="margin-bottom: 2rem; font-size: 1.05rem; color: #4b5563; text-align: center; line-height: 1.6;">
+                    ¿Has olvidado tu contraseña? No hay problema. Indícanos tu dirección de correo electrónico y te enviaremos un enlace para que puedas elegir una nueva.
+                </div>
+
+                <!-- MENSAJE DE ÉXITO (Session Status) -->
+                @if (session('status'))
+                    <div style="margin-bottom: 1.5rem; font-size: 0.95rem; font-weight: 600; color: #15803d; background-color: #dcfce7; padding: 1rem; border-radius: 0.5rem; text-align: center; border: 1px solid #bbf7d0;">
+                        {{ session('status') }}
+                    </div>
+                @endif
+
+                <form method="POST" action="{{ route('password.email') }}" style="display: flex; flex-direction: column; margin: 0;">
+                    @csrf
+
+                    <!-- Campo: Correo -->
+                    <div style="display: flex; width: 100%; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); border-radius: 0.5rem; overflow: hidden; border: 1px solid #d1d5db; margin-bottom: 0.5rem; box-sizing: border-box;">
+                        <span style="width: 35%; background-color: #744E36; color: white; display: flex; align-items: center; justify-content: center; padding: 1.1rem 0.5rem; font-size: 1rem; font-weight: 700; text-align: center; border-right: 1px solid #744E36; text-transform: uppercase; letter-spacing: 0.05em; user-select: none;">
+                            Correo
+                        </span>
+                        <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus placeholder="correo@ejemplo.com"
+                               style="width: 65%; padding: 1.1rem 1.2rem; background-color: white; color: #1f2937; font-size: 1.05rem; outline: none; border: none; box-sizing: border-box;">
+                    </div>
+                    
+                    @error('email')
+                        <span style="color: #ef4444; font-size: 0.85rem; margin-bottom: 1.5rem; display: block; text-align: center;">{{ $message }}</span>
+                    @enderror
+
+                    <!-- Enlace "Volver a Iniciar Sesión" -->
+                    <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 2.5rem; margin-top: 1.5rem; width: 100%;">
+                        <a href="{{ route('login') }}" 
+                           style="font-size: 0.95rem; color: #744E36; text-decoration: none; font-weight: 700; transition: color 0.2s ease;"
+                           onmouseover="this.style.color='#5c3d2a'; this.style.textDecoration='underline';" 
+                           onmouseout="this.style.color='#744E36'; this.style.textDecoration='none';">
+                            &larr; Volver al inicio de sesión
+                        </a>
+                    </div>
+
+                    <!-- Botón ENVIAR ENLACE -->
+                    <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+                        <button type="submit" 
+                                style="width: 80%; background-color: #744E36; color: white; font-size: 1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; padding: 1rem 1.5rem; border-radius: 9999px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15); border: none; cursor: pointer; transition: background-color 0.2s ease; text-align: center;"
+                                onmouseover="this.style.backgroundColor='#5c3d2a'" 
+                                onmouseout="this.style.backgroundColor='#744E36'">
+                            ENVIAR ENLACE DE RECUPERACIÓN
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
     </div>
 
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
-
-    <form method="POST" action="{{ route('password.email') }}">
-        @csrf
-
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Email Password Reset Link') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+</body>
+</html>
