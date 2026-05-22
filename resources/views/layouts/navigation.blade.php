@@ -7,7 +7,7 @@
                     <a href="{{ route('dashboard') }}" class="flex items-center gap-3 transition hover:opacity-80" style="text-decoration: none;">
                         <img src="{{ asset('images/InkScript.png') }}" alt="InkScript Logo" 
                              class="block object-contain" 
-                             style="height: 40px; width: auto; max-width: 100%;" />
+                             style="height: 65px; width: auto; max-width: 100%;" />
                         <span class="font-black text-xl tracking-tight hidden sm:block" style="color: #744E36; font-weight: 900;">InkScript</span>
                     </a>
                 </div>

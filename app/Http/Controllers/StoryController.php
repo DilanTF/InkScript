@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Story;
-use App\Models\Book;
-use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,10 +14,9 @@ class StoryController extends Controller
      */
     public function index()
     {
-        /** @var User $user */
+        /** @var \App\Models\User $user */
         $user = Auth::user();
         
-        // Ahora el editor reconocerá que $user tiene la relación 'stories'
         $stories = $user->stories; 
         
         return view('stories.index', compact('stories'));
@@ -38,14 +35,12 @@ class StoryController extends Controller
      */
     public function store(Request $request)
     {
-        // 1. Validación de los datos del formulario
         $request->validate([
             'title' => 'required|string|min:3|max:255',
             'description' => 'required|string',
         ]);
 
-        // 2. Obtención del usuario y creación de la relación
-        /** @var User $user */
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         $user->stories()->create([
@@ -53,15 +48,20 @@ class StoryController extends Controller
             'description' => $request->description,
         ]);
 
-        // 3. Redirección con mensaje de confirmación
         return redirect()->route('stories.index')->with('success', '¡Historia creada correctamente en InkScript!');
     }
 
     /**
      * Muestra una historia específica y sus capítulos.
      */
-    public function show(Story $story) {
-        $story->load(['chapters', 'comments.user']); // Cargamos capítulos y comentarios con sus autores
+    public function show(Story $story) 
+    {
+        // SOLUCIÓN AL ERROR:
+        // Solo cargamos los capítulos (Eager Loading). 
+        // Ya no cargamos 'comments.user' aquí porque los comentarios ahora pertenecen
+        // a los capítulos individuales y se cargarán en el ChapterController.
+        $story->load(['chapters']);
+        
         return view('stories.show', compact('story'));
     }
 
@@ -82,7 +82,9 @@ class StoryController extends Controller
             'title' => 'required|string|min:3|max:255',
             'description' => 'required|string',
         ]);
+        
         $story->update($request->all());
+        
         return redirect()->route('stories.index')->with('success', 'Historia actualizada con éxito.');
     }
 
@@ -93,28 +95,5 @@ class StoryController extends Controller
     {
         $story->delete();
         return redirect()->route('stories.index')->with('success', 'Historia eliminada correctamente.');
-    }
-
-    public function stats()
-    {
-        $authorId = Auth::id();
-
-        // 1. Obtenemos todos los libros que pertenecen a este autor
-        $myBooks = Book::where('user_id', $authorId)->get();
-        $myBookIds = $myBooks->pluck('id');
-
-        // 2. Buscamos los ítems de pedidos que correspondan a esos libros
-        $sales = OrderItem::whereIn('book_id', $myBookIds)
-            ->with('book')
-            ->get();
-
-        // 3. Calculamos totales
-        $totalEarnings = $sales->sum(function($item) {
-            return $item->price * $item->quantity;
-        });
-        
-        $totalSold = $sales->sum('quantity');
-
-        return view('stories.stats', compact('myBooks', 'sales', 'totalEarnings', 'totalSold'));
     }
 }
