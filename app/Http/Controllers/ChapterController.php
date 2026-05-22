@@ -43,4 +43,15 @@ class ChapterController extends Controller
         return redirect()->route('stories.show', $story)
             ->with('success', '¡Capítulo publicado con éxito en ' . $story->title . '!');
     }
+
+    /**
+     * Muestra un capítulo específico y sus comentarios.
+     */
+    public function show(Story $story, Chapter $chapter)
+    {
+        // Cargamos los comentarios del capítulo con los datos del usuario que comentó
+        $chapter->load('comments.user');
+        
+        return view('chapters.show', compact('story', 'chapter'));
+    }
 }

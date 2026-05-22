@@ -3,11 +3,19 @@
     <div class="py-8 bg-gray-50 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-12">
 
-            <!-- MENSAJE DE BIENVENIDA -->
-            <div class="flex items-center justify-between mb-8">
+            <!-- MENSAJE DE BIENVENIDA Y BOTÓN AL PANEL -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
                 <div>
                     <h1 class="text-3xl font-black text-gray-900 tracking-tight">Bienvenido, {{ Auth::user()->name }}</h1>
                     <p class="text-gray-500 mt-1 text-lg">¿Qué mundo vas a descubrir hoy?</p>
+                </div>
+                
+                <!-- NUEVO BOTÓN: Acceso directo al Panel -->
+                <div>
+                    <a href="{{ route('panel') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-[#744E36] text-white font-bold rounded-full hover:bg-[#5c3d2a] transition shadow-md group">
+                        <span>Ir a Mi Panel</span>
+                        <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                    </a>
                 </div>
             </div>
             
@@ -44,7 +52,7 @@
                                 </div>
                                 <div class="mt-6 flex items-center justify-between">
                                     <span class="text-2xl font-black text-gray-900">{{ number_format($book->price, 2) }} €</span>
-                                    <a href="{{ route('shop.show', $book) }}" class="px-5 py-2 text-white text-sm font-bold rounded-full transition-colors" style="background-color: #744E36;" onmouseover="this.style.backgroundColor='#5c3d2a'" onmouseout="this.style.backgroundColor='#744E36'">
+                                    <a href="{{ route('shop.show', $book->id) }}" class="px-5 py-2 text-white text-sm font-bold rounded-full transition-colors" style="background-color: #744E36;" onmouseover="this.style.backgroundColor='#5c3d2a'" onmouseout="this.style.backgroundColor='#744E36'">
                                         Comprar
                                     </a>
                                 </div>
@@ -76,7 +84,7 @@
                     </h2>
                     <div class="space-y-4">
                         @forelse($recommendedBooks as $book)
-                            <a href="{{ route('shop.show', $book) }}" class="block bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow group flex items-center gap-6">
+                            <a href="{{ route('shop.show', $book->id) }}" class="block bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow group flex items-center gap-6">
                                 <!-- Imagen miniatura -->
                                 <div class="w-20 h-28 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
                                     @if($book->image)
@@ -107,7 +115,7 @@
                     </h2>
                     <div class="space-y-4">
                         @forelse($freeStories as $story)
-                            <a href="{{ route('stories.show', $story) }}" class="block bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow group flex items-center gap-6">
+                            <a href="{{ route('stories.show', $story->id) }}" class="block bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow group flex items-center gap-6">
                                 <!-- Imagen/Icono miniatura -->
                                 <div class="w-20 h-28 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center border border-gray-200">
                                     <img src="{{ asset('images/InkScript.png') }}" class="w-12 h-12 object-contain opacity-50 grayscale group-hover:grayscale-0 transition-all">
@@ -115,10 +123,9 @@
                                 <!-- Datos -->
                                 <div class="flex-grow">
                                     <h4 class="font-bold text-lg text-gray-900 group-hover:text-[#744E36] transition-colors">{{ $story->title }}</h4>
-                                    <p class="text-sm text-gray-500 mt-1">Por <span class="font-bold">{{ $story->user->name }}</span></p>
+                                    <p class="text-sm text-gray-500 mt-1">Por <span class="font-bold">{{ $story->user->name ?? 'Anónimo' }}</span></p>
                                     <div class="mt-3 flex items-center gap-2">
                                         <span class="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-black uppercase rounded">Gratis</span>
-                                        <span class="text-xs text-gray-400">{{ $story->chapters()->count() }} Capítulos</span>
                                     </div>
                                 </div>
                             </a>
@@ -156,8 +163,7 @@
                                     <p class="text-xs text-gray-500 line-clamp-3">{{ $story->description }}</p>
                                 </div>
                                 <div class="mt-4 pt-4 border-t border-gray-50 flex justify-between items-center">
-                                    <span class="text-xs font-bold text-gray-400 uppercase">{{ $story->chapters()->count() }} Capítulos</span>
-                                    <a href="{{ route('stories.show', $story) }}" class="text-sm font-bold" style="color: #744E36;">Editar</a>
+                                    <a href="{{ route('stories.show', $story->id) }}" class="text-sm font-bold" style="color: #744E36;">Editar</a>
                                 </div>
                             </div>
                         @endforeach

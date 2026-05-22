@@ -53,10 +53,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::post('/checkout', [OrderController::class, 'checkout'])->name('checkout');
+
+    Route::get('/mi-panel', function () {
+        return view('panel');
+    })->name('panel');
 });
 
 // Definimos la ruta de capítulos como un recurso dependiente de historias
-Route::resource('stories.chapters', ChapterController::class)->only(['create', 'store']);
+Route::resource('stories.chapters', ChapterController::class)->only(['create', 'store', 'show']);
 
 // Rutas de la Tienda
 Route::get('/shop', [BookController::class, 'index'])->name('shop.index');
