@@ -65,18 +65,87 @@
                                     Editar Sinopsis
                                 </a>
 
-                                <!-- Lógica de Venta: Solo si tiene al menos 1 capítulo se puede vender -->
+                                <!-- Lógica de Venta: Solo si tiene al menos 1 capítulo -->
                                 @if($story->chapters()->count() > 0)
-                                    <form action="{{ route('stories.sell', $story) }}" method="POST" class="pt-4 border-t border-[#744E36]/20 mt-4">
-                                        @csrf
-                                        <!-- Simulamos que el autor le pone un precio a su libro -->
-                                        <input type="hidden" name="price" value="14.99">
-                                        <input type="hidden" name="genre" value="Ficción Autor">
-                                        <button type="submit" class="flex items-center justify-center w-full px-4 py-3 bg-gradient-to-r from-amber-500 to-yellow-500 text-white font-bold rounded-xl shadow-md hover:from-amber-600 hover:to-yellow-600 transition-colors gap-2" onclick="return confirm('¿Quieres empaquetar esta historia y enviarla a la Tienda por 14.99€?')">
+                                    <div class="pt-4 border-t border-[#744E36]/20 mt-4">
+                                        <!-- Botón que abre el Modal de Venta -->
+                                        <button type="button" onclick="document.getElementById('publishModal').classList.remove('hidden')" class="flex items-center justify-center w-full px-4 py-3 bg-gradient-to-r from-amber-500 to-yellow-500 text-white font-bold rounded-xl shadow-md hover:from-amber-600 hover:to-yellow-600 transition-colors gap-2">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                             Publicar en Tienda
                                         </button>
-                                    </form>
+                                    </div>
+
+                                    <!-- MODAL DE PUBLICACIÓN EN TIENDA -->
+                                    <div id="publishModal" class="hidden fixed inset-0 z-[100] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                                        <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                                            
+                                            <!-- Fondo oscuro desenfocado -->
+                                            <div class="fixed inset-0 transition-opacity bg-gray-900 bg-opacity-75 backdrop-blur-sm" aria-hidden="true" onclick="document.getElementById('publishModal').classList.add('hidden')"></div>
+                                            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                                            <!-- Caja del Modal -->
+                                            <div class="inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-3xl shadow-2xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-8 relative z-10 border border-gray-100">
+                                                <form action="{{ route('stories.sell', $story) }}" method="POST">
+                                                    @csrf
+                                                    
+                                                    <!-- Icono superior -->
+                                                    <div class="flex items-center justify-center w-16 h-16 mx-auto bg-amber-100 rounded-full mb-6 shadow-inner">
+                                                        <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                    </div>
+                                                    
+                                                    <!-- Textos -->
+                                                    <div class="text-center">
+                                                        <h3 class="text-2xl font-black leading-6 text-gray-900" id="modal-title" style="font-family: 'Instrument Sans', sans-serif;">
+                                                            Lanzar al Mercado
+                                                        </h3>
+                                                        <p class="text-sm text-gray-500 mt-3 leading-relaxed">
+                                                            Estás a punto de publicar <strong>"{{ $story->title }}"</strong> como un E-book en la tienda principal de InkScript. Establece los detalles de venta a continuación.
+                                                        </p>
+                                                    </div>
+
+                                                    <!-- Formulario de Precio y Género -->
+                                                    <div class="mt-8 space-y-6">
+                                                        <!-- Input Precio -->
+                                                        <div>
+                                                            <label for="price" class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">Precio de Venta</label>
+                                                            <div class="relative rounded-xl shadow-sm">
+                                                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                                                    <span class="text-gray-500 font-black sm:text-lg">€</span>
+                                                                </div>
+                                                                <input type="number" name="price" id="price" step="0.01" min="0.99" value="9.99" class="focus:ring-amber-500 focus:border-amber-500 block w-full pl-10 pr-4 py-3 sm:text-lg border-gray-200 rounded-xl font-black text-gray-900 bg-gray-50 transition-colors" required>
+                                                            </div>
+                                                            <p class="text-xs text-gray-400 mt-2 font-medium">El precio mínimo permitido en la plataforma es de 0.99€.</p>
+                                                        </div>
+
+                                                        <!-- Select Género -->
+                                                        <div>
+                                                            <label for="genre" class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">Género Literario</label>
+                                                            <select name="genre" id="genre" class="focus:ring-amber-500 focus:border-amber-500 block w-full px-4 py-3 sm:text-base border-gray-200 rounded-xl font-bold text-gray-700 bg-gray-50 transition-colors cursor-pointer" required>
+                                                                <option value="Fantasía">Fantasía</option>
+                                                                <option value="Ciencia Ficción">Ciencia Ficción</option>
+                                                                <option value="Romance">Romance</option>
+                                                                <option value="Terror">Terror</option>
+                                                                <option value="Misterio">Misterio</option>
+                                                                <option value="Aventura">Aventura</option>
+                                                                <option value="Histórica">Histórica</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Botones del Modal -->
+                                                    <div class="mt-10 sm:flex sm:flex-row-reverse gap-3">
+                                                        <button type="submit" class="w-full inline-flex justify-center items-center rounded-full border border-transparent px-8 py-3 bg-gradient-to-r from-amber-500 to-yellow-500 text-base font-bold text-white shadow-md hover:from-amber-600 hover:to-yellow-600 sm:w-auto sm:text-sm transition-all transform hover:-translate-y-0.5">
+                                                            Confirmar y Publicar
+                                                        </button>
+                                                        <button type="button" onclick="document.getElementById('publishModal').classList.add('hidden')" class="mt-3 w-full inline-flex justify-center items-center rounded-full border border-gray-200 px-8 py-3 bg-white text-base font-bold text-gray-600 shadow-sm hover:bg-gray-50 hover:text-gray-900 sm:mt-0 sm:w-auto sm:text-sm transition-colors">
+                                                            Cancelar
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- FIN DEL MODAL -->
                                 @endif
                             </div>
                         </div>
