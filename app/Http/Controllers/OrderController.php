@@ -11,77 +11,113 @@ use Illuminate\Support\Facades\Auth;
 class OrderController extends Controller
 {
     /**
-     * Procesa el carrito y crea un pedido real.
+     * Muestra la vista de pago (Checkout) con el resumen del carrito.
+     */
+    public function checkoutView()
+    {
+        $cart = session()->get('cart', []);
+        
+        if (empty($cart)) {
+            return redirect()->route('shop.index')->with('error', 'Tu carrito está vacío.');
+        }
+
+        $total = 0;
+        foreach($cart as $item) {
+            $total += $item['price'] * $item['quantity'];
+        }
+
+        return view('checkout.index', compact('cart', 'total'));
+    }
+
+    /**
+     * Muestra el historial de compras del usuario actual.
+     */
+    public function index()
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        
+        // Cargamos los pedidos con sus productos relacionados (Eager Loading)
+        $orders = $user->orders()->with('items.book')->orderBy('created_at', 'desc')->get();
+
+        return view('orders.index', compact('orders'));
+    }
+
+    /**
+     * Muestra el detalle de una compra específica.
+     */
+    public function show(Order $order)
+    {
+        // Verificamos que el pedido pertenezca al usuario autenticado
+        if ($order->user_id !== Auth::id()) {
+            abort(403, 'No tienes permiso para ver este pedido.');
+        }
+
+        $order->load('items.book');
+        
+        return view('orders.show', compact('order'));
+    }
+
+    /**
+     * Procesa la compra final de los productos en el carrito.
      */
     public function checkout()
     {
         $cart = session()->get('cart', []);
 
         if (empty($cart)) {
-            return back()->with('error', 'El carrito está vacío.');
+            return redirect()->route('shop.index')->with('error', 'Tu carrito está vacío.');
         }
 
-        // 1. VALIDACIÓN PREVIA: Comprobar stock de todos los productos antes de tocar la BD
-        foreach($cart as $id => $details) {
-            $book = Book::find($id);
-            
-            // Si no es digital y pedimos más de lo que hay...
-            if (!$book->is_digital && $book->stock < $details['quantity']) {
-                return back()->with('error', "Lo sentimos, no hay suficiente stock para: {$book->title}. (Disponibles: {$book->stock})");
-            }
-        }
-
+        // Iniciamos una transacción para asegurar la integridad de los datos
         DB::beginTransaction();
 
         try {
             $total = 0;
-            foreach($cart as $details) {
-                $total += $details['price'] * $details['quantity'];
+            foreach($cart as $item) {
+                $total += $item['price'] * $item['quantity'];
             }
 
-            // 2. Crear el Pedido
+            // 1. Creamos el registro del Pedido
             $order = Order::create([
                 'user_id' => Auth::id(),
                 'total_amount' => $total,
-                'status' => 'completed'
+                'status' => 'completado'
             ]);
 
-            // 3. Crear los ítems y restar stock
+            // 2. Registramos cada libro comprado y actualizamos el stock
             foreach($cart as $id => $details) {
-                $book = Book::find($id);
-
                 $order->items()->create([
                     'book_id' => $id,
                     'quantity' => $details['quantity'],
                     'price' => $details['price']
                 ]);
 
-                // Restamos stock (ya sabemos que hay suficiente por la validación previa)
-                if (!$book->is_digital) {
-                    $book->decrement('stock', $details['quantity']);
+                $book = Book::find($id);
+                
+                if ($book) {
+                    // Si el libro es físico (no digital), descontamos del inventario
+                    if (!$book->is_digital) {
+                        if ($book->stock < $details['quantity']) {
+                            throw new \Exception("Stock insuficiente para el libro: " . $book->title);
+                        }
+                        $book->decrement('stock', $details['quantity']);
+                    }
                 }
             }
 
+            // Confirmamos todos los cambios en la base de datos
             DB::commit();
+
+            // 3. Vaciamos el carrito de la sesión
             session()->forget('cart');
 
-            return redirect()->route('dashboard')->with('success', '¡Gracias por tu compra! Pedido #' . $order->id . ' procesado.');
+            return redirect()->route('orders.show', $order)->with('success', '¡Pedido procesado con éxito!');
 
         } catch (\Exception $e) {
+            // Si algo falla (ej. falta de stock), deshacemos todo
             DB::rollback();
-            // Log::error($e->getMessage()); // Opcional: para que tú veas el error en storage/logs
-            return back()->with('error', 'Hubo un error técnico. No se ha realizado ningún cargo.');
+            return redirect()->route('cart.index')->with('error', 'Error en la compra: ' . $e->getMessage());
         }
-    }
-
-    public function index()
-    {
-        // Obtenemos los pedidos del usuario autenticado con sus ítems y libros relacionados
-        $orders = Order::where('user_id', Auth::id())
-            ->with('items.book') 
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        return view('orders.index', compact('orders'));
     }
 }

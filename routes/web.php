@@ -52,14 +52,14 @@ Route::middleware('auth')->group(function () {
     // Pedidos
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
-    Route::post('/checkout', [OrderController::class, 'checkout'])->name('checkout');
-
-    Route::get('/mi-panel', function () {
-        return view('panel');
-    })->name('panel');
+    
+    // Checkout (Pasarela de Pago)
+    Route::get('/checkout', [OrderController::class, 'checkoutView'])->name('checkout.index');
+    Route::post('/checkout', [OrderController::class, 'checkout'])->name('checkout.process');
 });
 
 // Definimos la ruta de capítulos como un recurso dependiente de historias
+// AÑADIMOS 'show' PARA PODER LEER LOS CAPÍTULOS
 Route::resource('stories.chapters', ChapterController::class)->only(['create', 'store', 'show']);
 
 // Rutas de la Tienda

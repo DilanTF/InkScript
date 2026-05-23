@@ -119,15 +119,14 @@
                                     <span class="text-4xl font-black text-gray-900">{{ number_format($total, 2) }}€</span>
                                 </div>
 
-                                <form action="{{ route('checkout') }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="w-full text-white font-bold py-4 px-6 rounded-full shadow-lg transition-all transform active:scale-95 flex items-center justify-center group text-lg" style="background-color: #744E36;" onmouseover="this.style.backgroundColor='#5c3d2a'" onmouseout="this.style.backgroundColor='#744E36'">
-                                        <span>Pagar de forma segura</span>
-                                        <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                                        </svg>
-                                    </button>
-                                </form>
+                                <!-- AQUÍ ESTÁ EL CAMBIO CLAVE -->
+                                <!-- Pasamos de un formulario POST a un enlace que redirige al Checkout -->
+                                <a href="{{ route('checkout.index') }}" class="w-full text-white font-bold py-4 px-6 rounded-full shadow-lg transition-all transform active:scale-95 flex items-center justify-center group text-lg" style="background-color: #744E36;" onmouseover="this.style.backgroundColor='#5c3d2a'" onmouseout="this.style.backgroundColor='#744E36'">
+                                    <span>Proceder al Pago</span>
+                                    <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                    </svg>
+                                </a>
 
                                 <!-- Garantías visuales (Confianza) -->
                                 <div class="mt-8 flex flex-col items-center">
