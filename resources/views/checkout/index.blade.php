@@ -51,28 +51,72 @@
                             <div class="space-y-6">
                                 <div>
                                     <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Dirección (Calle, Número, Piso)</label>
-                                    <input type="text" placeholder="Ej: Calle Gran Vía, 12, 3ºA" class="w-full border-gray-300 rounded-xl focus:ring-[#744E36] focus:border-[#744E36] px-4 py-3" required>
+                                    <input type="text" name="shipping_address" placeholder="Ej: Calle Gran Vía, 12, 3ºA" class="w-full border-gray-300 rounded-xl focus:ring-[#744E36] focus:border-[#744E36] px-4 py-3" required>
                                 </div>
                                 
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     <div class="md:col-span-2">
                                         <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Ciudad</label>
-                                        <input type="text" placeholder="Madrid" class="w-full border-gray-300 rounded-xl focus:ring-[#744E36] focus:border-[#744E36] px-4 py-3" required>
+                                        <input type="text" name="shipping_city" placeholder="Madrid" class="w-full border-gray-300 rounded-xl focus:ring-[#744E36] focus:border-[#744E36] px-4 py-3" required>
                                     </div>
                                     <div>
                                         <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">C. Postal</label>
-                                        <input type="text" placeholder="28013" class="w-full border-gray-300 rounded-xl focus:ring-[#744E36] focus:border-[#744E36] px-4 py-3" required>
+                                        <input type="text" name="shipping_postal_code" placeholder="28013" class="w-full border-gray-300 rounded-xl focus:ring-[#744E36] focus:border-[#744E36] px-4 py-3" required>
                                     </div>
                                 </div>
                                 
                                 <div>
                                     <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">País</label>
-                                    <select class="w-full border-gray-300 rounded-xl focus:ring-[#744E36] focus:border-[#744E36] px-4 py-3 bg-white" required>
-                                        <option value="ES">España</option>
-                                        <option value="MX">México</option>
-                                        <option value="AR">Argentina</option>
-                                        <option value="CO">Colombia</option>
-                                        <option value="CL">Chile</option>
+                                    <select name="shipping_country" class="w-full border-gray-300 rounded-xl focus:ring-[#744E36] focus:border-[#744E36] px-4 py-3 bg-white" required>
+                                        <option value="España" selected>España</option>
+                                        <option value="Alemania">Alemania</option>
+                                        <option value="Andorra">Andorra</option>
+                                        <option value="Argentina">Argentina</option>
+                                        <option value="Australia">Australia</option>
+                                        <option value="Austria">Austria</option>
+                                        <option value="Bélgica">Bélgica</option>
+                                        <option value="Bolivia">Bolivia</option>
+                                        <option value="Brasil">Brasil</option>
+                                        <option value="Canadá">Canadá</option>
+                                        <option value="Chile">Chile</option>
+                                        <option value="China">China</option>
+                                        <option value="Colombia">Colombia</option>
+                                        <option value="Corea del Sur">Corea del Sur</option>
+                                        <option value="Costa Rica">Costa Rica</option>
+                                        <option value="Cuba">Cuba</option>
+                                        <option value="Dinamarca">Dinamarca</option>
+                                        <option value="Ecuador">Ecuador</option>
+                                        <option value="El Salvador">El Salvador</option>
+                                        <option value="Estados Unidos">Estados Unidos</option>
+                                        <option value="Filipinas">Filipinas</option>
+                                        <option value="Finlandia">Finlandia</option>
+                                        <option value="Francia">Francia</option>
+                                        <option value="Grecia">Grecia</option>
+                                        <option value="Guatemala">Guatemala</option>
+                                        <option value="Honduras">Honduras</option>
+                                        <option value="India">India</option>
+                                        <option value="Irlanda">Irlanda</option>
+                                        <option value="Islandia">Islandia</option>
+                                        <option value="Italia">Italia</option>
+                                        <option value="Japón">Japón</option>
+                                        <option value="Marruecos">Marruecos</option>
+                                        <option value="México">México</option>
+                                        <option value="Nicaragua">Nicaragua</option>
+                                        <option value="Noruega">Noruega</option>
+                                        <option value="Nueva Zelanda">Nueva Zelanda</option>
+                                        <option value="Países Bajos">Países Bajos</option>
+                                        <option value="Panamá">Panamá</option>
+                                        <option value="Paraguay">Paraguay</option>
+                                        <option value="Perú">Perú</option>
+                                        <option value="Polonia">Polonia</option>
+                                        <option value="Portugal">Portugal</option>
+                                        <option value="Puerto Rico">Puerto Rico</option>
+                                        <option value="Reino Unido">Reino Unido</option>
+                                        <option value="República Dominicana">República Dominicana</option>
+                                        <option value="Suecia">Suecia</option>
+                                        <option value="Suiza">Suiza</option>
+                                        <option value="Uruguay">Uruguay</option>
+                                        <option value="Venezuela">Venezuela</option>
                                     </select>
                                 </div>
                             </div>

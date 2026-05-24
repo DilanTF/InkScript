@@ -61,7 +61,7 @@ class OrderController extends Controller
     /**
      * Procesa la compra final de los productos en el carrito.
      */
-    public function checkout()
+    public function checkout(Request $request) // <-- AÑADIDO: Request para capturar el formulario
     {
         $cart = session()->get('cart', []);
 
@@ -78,11 +78,17 @@ class OrderController extends Controller
                 $total += $item['price'] * $item['quantity'];
             }
 
-            // 1. Creamos el registro del Pedido
+            // 1. Creamos el registro del Pedido (AHORA GUARDAMOS LA DIRECCIÓN Y EL REGALO)
             $order = Order::create([
                 'user_id' => Auth::id(),
                 'total_amount' => $total,
-                'status' => 'completado'
+                'status' => 'completado',
+                'shipping_address' => $request->shipping_address,
+                'shipping_city' => $request->shipping_city,
+                'shipping_postal_code' => $request->shipping_postal_code,
+                'shipping_country' => $request->shipping_country,
+                'is_gift' => $request->has('is_gift'),
+                'gift_email' => $request->gift_email,
             ]);
 
             // 2. Registramos cada libro comprado y actualizamos el stock
@@ -112,6 +118,7 @@ class OrderController extends Controller
             // 3. Vaciamos el carrito de la sesión
             session()->forget('cart');
 
+            // Redirigimos a la vista de la factura
             return redirect()->route('orders.show', $order)->with('success', '¡Pedido procesado con éxito!');
 
         } catch (\Exception $e) {

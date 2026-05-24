@@ -17,9 +17,9 @@ Route::get('/', function () {
 // 2. Rutas de Historias protegidas por Autenticación y Rol de Autor
 Route::resource('stories', StoryController::class)->middleware(['auth', 'role.author']);
 
-// 3. INICIO (Antiguo Dashboard)
-// SOLUCIÓN: Buscamos los datos en la BD y los pasamos a la vista
-Route::get('/inicio', function () {
+// 3. INICIO (Dashboard principal)
+// SOLUCIÓN: Buscamos los datos en la BD, los pasamos a la vista y cerramos correctamente
+Route::get('/dashboard', function () {
     // A. Obras del mes (3 libros aleatorios que estén disponibles)
     $featuredBooks = \App\Models\Book::where('status', 'available')->inRandomOrder()->limit(3)->get();
 
@@ -29,14 +29,18 @@ Route::get('/inicio', function () {
     // C. Historias gratis de OTROS autores (2 historias donde el user_id no sea el mío)
     $freeStories = \App\Models\Story::with('user')->where('user_id', '!=', auth()->id())->inRandomOrder()->limit(2)->get();
 
-    // D. Mis historias (Todas mis obras creadas)
+    // D. Tus historias originales (necesario para mostrarlas abajo del todo)
     $myStories = \App\Models\Story::where('user_id', auth()->id())->latest()->get();
 
-    // Enviamos todas estas variables a la vista 'inicio'
-    return view('inicio', compact('featuredBooks', 'recommendedBooks', 'freeStories', 'myStories')); 
+    // Retornamos la vista pasando todas las variables que necesita
+    return view('inicio', compact('featuredBooks', 'recommendedBooks', 'freeStories', 'myStories'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// 4. Rutas del Perfil de Usuario y Carrito/Pedidos
+// 4. NUEVA RUTA PARA TU PANEL
+Route::get('/panel', function () {
+    return view('panel');
+})->middleware(['auth', 'verified'])->name('panel');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
