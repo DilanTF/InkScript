@@ -8,6 +8,7 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\CommunityController; // AÑADIDO: Importamos el controlador de la comunidad
 
 // 1. Ruta principal (Portada) -> REDIRIGE AL LOGIN
 Route::get('/', function () {
@@ -18,25 +19,16 @@ Route::get('/', function () {
 Route::resource('stories', StoryController::class)->middleware(['auth', 'role.author']);
 
 // 3. INICIO (Dashboard principal)
-// SOLUCIÓN: Buscamos los datos en la BD, los pasamos a la vista y cerramos correctamente
 Route::get('/dashboard', function () {
-    // A. Obras del mes (3 libros aleatorios que estén disponibles)
     $featuredBooks = \App\Models\Book::where('status', 'available')->inRandomOrder()->limit(3)->get();
-
-    // B. Recomendaciones (2 libros distintos disponibles)
     $recommendedBooks = \App\Models\Book::where('status', 'available')->inRandomOrder()->limit(2)->get();
-
-    // C. Historias gratis de OTROS autores (2 historias donde el user_id no sea el mío)
     $freeStories = \App\Models\Story::with('user')->where('user_id', '!=', auth()->id())->inRandomOrder()->limit(2)->get();
-
-    // D. Tus historias originales (necesario para mostrarlas abajo del todo)
     $myStories = \App\Models\Story::where('user_id', auth()->id())->latest()->get();
 
-    // Retornamos la vista pasando todas las variables que necesita
     return view('inicio', compact('featuredBooks', 'recommendedBooks', 'freeStories', 'myStories'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// 4. NUEVA RUTA PARA TU PANEL
+// 4. RUTA PARA TU PANEL
 Route::get('/panel', function () {
     return view('panel');
 })->middleware(['auth', 'verified'])->name('panel');
@@ -62,15 +54,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout', [OrderController::class, 'checkout'])->name('checkout.process');
 });
 
-// Definimos la ruta de capítulos como un recurso dependiente de historias
-// AÑADIMOS 'show' PARA PODER LEER LOS CAPÍTULOS
 Route::resource('stories.chapters', ChapterController::class)->only(['create', 'store', 'show']);
 
-// Rutas de la Tienda
+// Rutas de la Tienda (Libros de pago)
 Route::get('/shop', [BookController::class, 'index'])->name('shop.index');
 Route::get('/shop/book/{book}', [BookController::class, 'show'])->name('shop.show');
 
-// Ruta para vender una historia (Solo para autores)
+// Ruta de la Biblioteca de la Comunidad (Historias gratuitas)
+Route::get('/comunidad', [CommunityController::class, 'index'])->name('community.index');
+
+// Ruta para vender una historia
 Route::post('/stories/{story}/sell', [BookController::class, 'publishAsBook'])->name('stories.sell');
 
 // Comentarios
