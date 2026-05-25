@@ -63,4 +63,12 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Story::class, 'story_user')->withTimestamps();
     }
+
+    /**
+     * Capítulos premium que el usuario ha comprado.
+     */
+    public function purchasedChapters()
+    {
+        return $this->belongsToMany(Chapter::class, 'chapter_user')->withTimestamps();
+    }
 }

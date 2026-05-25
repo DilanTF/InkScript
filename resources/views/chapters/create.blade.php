@@ -32,17 +32,34 @@
                             <span class="text-red-500 text-xs font-bold mt-2 block">{{ $message }}</span>
                         @enderror
                     </div>
-                    
-                    <div class="mb-6">
-                        <label class="block font-bold text-sm uppercase tracking-wider mb-2" style="color: #744E36;">
-                            Volumen / Arco Argumental (Opcional)
-                        </label>
-                        <input type="text" name="volume_title" value="{{ old('volume_title') }}" placeholder="Ej: Volumen 1: El Despertar"
-                            class="w-full border-gray-200 rounded-xl focus:ring-[#744E36] focus:border-[#744E36] px-4 py-3 bg-gray-50 focus:bg-white transition-colors">
-                        <p class="text-xs text-gray-500 mt-2 font-medium">
-                            Si dejas el mismo nombre en varios capítulos, se agruparán automáticamente en la portada de la historia.
-                        </p>
+
+                    <!-- NUEVA FILA: Volumen y Precio -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <!-- Campo para el Volumen -->
+                        <div>
+                            <label class="block font-bold text-sm uppercase tracking-wider mb-2" style="color: #744E36;">
+                                Volumen / Arco (Opcional)
+                            </label>
+                            <input type="text" name="volume_title" value="{{ old('volume_title') }}" placeholder="Ej: Volumen 1"
+                                   class="w-full border-gray-200 rounded-xl focus:ring-[#744E36] focus:border-[#744E36] px-4 py-3 bg-gray-50 focus:bg-white transition-colors">
+                        </div>
+
+                        <!-- Campo para el Precio -->
+                        <div>
+                            <label class="block font-bold text-sm uppercase tracking-wider mb-2" style="color: #744E36;">
+                                Precio (En Euros)
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <span class="text-gray-500 font-black">€</span>
+                                </div>
+                                <input type="number" name="price" value="{{ old('price', '0.00') }}" step="0.01" min="0"
+                                       class="w-full border-gray-200 rounded-xl focus:ring-[#744E36] focus:border-[#744E36] pl-10 pr-4 py-3 bg-gray-50 focus:bg-white transition-colors">
+                            </div>
+                            <p class="text-[10px] text-gray-500 mt-1 font-bold">Déjalo en 0.00 para que sea gratis para todos.</p>
+                        </div>
                     </div>
+
                     <!-- Campo: Contenido (El lienzo) -->
                     <div class="mb-10">
                         <div class="flex items-center justify-between mb-2">

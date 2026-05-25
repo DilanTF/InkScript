@@ -92,6 +92,7 @@ class StoryController extends Controller
             'title' => 'required|string|min:3|max:255',
             'description' => 'required|string',
             'genres' => 'required|array|min:1',
+            'status' => 'required|string', // Validamos el estado
         ]);
         
         $genreString = implode(', ', $request->genres);
@@ -100,6 +101,7 @@ class StoryController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'genre' => $genreString,
+            'status' => $request->status, // Guardamos el estado
         ]);
         
         return redirect()->route('stories.index')->with('success', 'Historia actualizada con éxito.');

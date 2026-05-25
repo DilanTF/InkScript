@@ -84,7 +84,7 @@ Route::get('/inventario', function () {
     return view('inventory.index', compact('inventory'));
 })->middleware(['auth', 'verified'])->name('inventory.index');
 
-
+// 6. Rutas de Perfil y Carrito protegidas por Autenticación
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -115,6 +115,9 @@ Route::get('/shop/book/{book}', [BookController::class, 'show'])->name('shop.sho
 
 // Botón de Seguir Historia
 Route::post('/stories/{story}/follow', [StoryController::class, 'toggleFollow'])->name('stories.follow');
+
+// Comprar capítulo Premium
+Route::post('/chapters/{chapter}/buy', [\App\Http\Controllers\ChapterController::class, 'buy'])->name('chapters.buy');
 
 // La Biblioteca de la Comunidad
 Route::get('/comunidad', [CommunityController::class, 'index'])->name('community.index');

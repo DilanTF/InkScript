@@ -8,8 +8,22 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Chapter extends Model
 {
-    protected $fillable = ['story_id', 'title', 'volume_title', 'content', 'order_number'];
+    protected $fillable = ['story_id', 
+        'title',
+        'volume_title',
+        'content',
+        'order_number',
+        'price'];
 
+
+    /**
+     * Usuarios que han comprado este capítulo.
+     */
+    public function purchasers()
+    {
+        return $this->belongsToMany(User::class, 'chapter_user')->withTimestamps();
+    }
+   
     /**
      * Relación con la historia.
      */

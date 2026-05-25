@@ -13,6 +13,7 @@ class Story extends Model
         'title',
         'description',
         'genre',
+        'status',
         'user_id',
     ];
 

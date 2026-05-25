@@ -26,14 +26,31 @@
                                class="block w-full border-gray-200 bg-gray-50 focus:bg-white focus:border-[#744E36] focus:ring-[#744E36] rounded-xl shadow-sm px-6 py-4 text-xl font-semibold transition-colors text-gray-900" required>
                     </div>
 
-                    <!-- CAMPO DEL VOLUMEN PARA ASIGNAR A POSTERIORI -->
-                    <div class="mb-8">
-                        <label class="block font-bold text-sm uppercase tracking-wider mb-2" style="color: #744E36;">
-                            Volumen / Arco Argumental (Opcional)
-                        </label>
-                        <input type="text" name="volume_title" value="{{ old('volume_title', $chapter->volume_title) }}" placeholder="Ej: Volumen 1: El Despertar"
-                               class="w-full border-gray-200 rounded-xl focus:ring-[#744E36] focus:border-[#744E36] px-6 py-3 bg-gray-50 focus:bg-white transition-colors">
-                        <p class="text-xs text-gray-500 mt-2 font-medium">Agrupa este capítulo con otros escribiendo el mismo nombre de Volumen.</p>
+                    <!-- NUEVA FILA: Volumen y Precio -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <!-- CAMPO DEL VOLUMEN -->
+                        <div>
+                            <label class="block font-bold text-sm uppercase tracking-wider mb-2" style="color: #744E36;">
+                                Volumen / Arco (Opcional)
+                            </label>
+                            <input type="text" name="volume_title" value="{{ old('volume_title', $chapter->volume_title) }}" placeholder="Ej: Volumen 1"
+                                   class="w-full border-gray-200 rounded-xl focus:ring-[#744E36] focus:border-[#744E36] px-4 py-3 bg-gray-50 focus:bg-white transition-colors">
+                        </div>
+
+                        <!-- CAMPO DEL PRECIO -->
+                        <div>
+                            <label class="block font-bold text-sm uppercase tracking-wider mb-2" style="color: #744E36;">
+                                Precio (En Euros)
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <span class="text-gray-500 font-black">€</span>
+                                </div>
+                                <input type="number" name="price" value="{{ old('price', $chapter->price ?? '0.00') }}" step="0.01" min="0"
+                                       class="w-full border-gray-200 rounded-xl focus:ring-[#744E36] focus:border-[#744E36] pl-10 pr-4 py-3 bg-gray-50 focus:bg-white transition-colors">
+                            </div>
+                            <p class="text-[10px] text-gray-500 mt-1 font-bold">Déjalo en 0.00 para que sea gratis para todos.</p>
+                        </div>
                     </div>
 
                     <div class="mb-10">

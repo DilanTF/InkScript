@@ -23,18 +23,19 @@ class ChapterController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'volume_title' => 'nullable|string|max:255', // Capturamos el volumen
+            'volume_title' => 'nullable|string|max:255',
             'content' => 'required|string',
+            'price' => 'nullable|numeric|min:0', // <-- NUEVO: Validamos el precio
         ]);
 
-        // Calculamos el número de orden (el último + 1)
         $orderNumber = $story->chapters()->max('order_number') + 1;
 
         $story->chapters()->create([
             'title' => $request->title,
-            'volume_title' => $request->volume_title, // Guardamos el volumen
+            'volume_title' => $request->volume_title,
             'content' => $request->content,
             'order_number' => $orderNumber,
+            'price' => $request->price ?? 0.00, // <-- NUEVO: Si no pone nada, es 0 (gratis)
         ]);
 
         return redirect()->route('stories.show', $story)
@@ -80,12 +81,14 @@ class ChapterController extends Controller
             'title' => 'required|string|max:255',
             'volume_title' => 'nullable|string|max:255',
             'content' => 'required|string',
+            'price' => 'nullable|numeric|min:0', // <-- Validamos precio
         ]);
 
         $chapter->update([
             'title' => $request->title,
             'volume_title' => $request->volume_title,
             'content' => $request->content,
+            'price' => $request->price ?? 0.00, // <-- Actualizamos precio
         ]);
 
         return redirect()->route('stories.show', $story)
