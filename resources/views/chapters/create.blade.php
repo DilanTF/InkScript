@@ -32,7 +32,17 @@
                             <span class="text-red-500 text-xs font-bold mt-2 block">{{ $message }}</span>
                         @enderror
                     </div>
-
+                    
+                    <div class="mb-6">
+                        <label class="block font-bold text-sm uppercase tracking-wider mb-2" style="color: #744E36;">
+                            Volumen / Arco Argumental (Opcional)
+                        </label>
+                        <input type="text" name="volume_title" value="{{ old('volume_title') }}" placeholder="Ej: Volumen 1: El Despertar"
+                            class="w-full border-gray-200 rounded-xl focus:ring-[#744E36] focus:border-[#744E36] px-4 py-3 bg-gray-50 focus:bg-white transition-colors">
+                        <p class="text-xs text-gray-500 mt-2 font-medium">
+                            Si dejas el mismo nombre en varios capítulos, se agruparán automáticamente en la portada de la historia.
+                        </p>
+                    </div>
                     <!-- Campo: Contenido (El lienzo) -->
                     <div class="mb-10">
                         <div class="flex items-center justify-between mb-2">

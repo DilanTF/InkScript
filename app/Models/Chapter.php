@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Chapter extends Model
 {
-    protected $fillable = ['title', 'content', 'order_number', 'story_id'];
+    protected $fillable = ['story_id', 'title', 'volume_title', 'content', 'order_number'];
 
     /**
      * Relación con la historia.

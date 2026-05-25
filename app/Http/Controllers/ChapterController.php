@@ -17,12 +17,13 @@ class ChapterController extends Controller
     }
 
     /**
-     * Almacena el capítulo en la base de datos.
+     * Almacena el capítulo en la base de datos (AHORA GUARDA EL VOLUMEN).
      */
     public function store(Request $request, Story $story)
     {
         $request->validate([
             'title' => 'required|string|max:255',
+            'volume_title' => 'nullable|string|max:255', // Capturamos el volumen
             'content' => 'required|string',
         ]);
 
@@ -31,12 +32,13 @@ class ChapterController extends Controller
 
         $story->chapters()->create([
             'title' => $request->title,
+            'volume_title' => $request->volume_title, // Guardamos el volumen
             'content' => $request->content,
             'order_number' => $orderNumber,
         ]);
 
         return redirect()->route('stories.show', $story)
-            ->with('success', '¡Capítulo publicado con éxito en ' . $story->title . '!');
+            ->with('success', '¡Capítulo publicado con éxito!');
     }
 
     /**
@@ -44,13 +46,49 @@ class ChapterController extends Controller
      */
     public function show(Story $story, Chapter $chapter)
     {
-        // Cargamos los comentarios del capítulo con los datos del usuario que comentó
         $chapter->load('comments.user');
         
-        // Magia de navegación: Buscamos el capítulo anterior y siguiente de esta misma historia
         $previousChapter = $story->chapters()->where('id', '<', $chapter->id)->orderBy('id', 'desc')->first();
         $nextChapter = $story->chapters()->where('id', '>', $chapter->id)->orderBy('id', 'asc')->first();
         
         return view('chapters.show', compact('story', 'chapter', 'previousChapter', 'nextChapter'));
+    }
+
+    /**
+     * Muestra el formulario para EDITAR un capítulo existente.
+     */
+    public function edit(Story $story, Chapter $chapter)
+    {
+        // Seguridad: Solo el autor de la historia puede editar el capítulo
+        if (auth()->id() !== $story->user_id) {
+            abort(403, 'No tienes permiso para editar este capítulo.');
+        }
+
+        return view('chapters.edit', compact('story', 'chapter'));
+    }
+
+    /**
+     * Actualiza los datos del capítulo en la base de datos.
+     */
+    public function update(Request $request, Story $story, Chapter $chapter)
+    {
+        if (auth()->id() !== $story->user_id) {
+            abort(403);
+        }
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'volume_title' => 'nullable|string|max:255',
+            'content' => 'required|string',
+        ]);
+
+        $chapter->update([
+            'title' => $request->title,
+            'volume_title' => $request->volume_title,
+            'content' => $request->content,
+        ]);
+
+        return redirect()->route('stories.show', $story)
+            ->with('success', '¡Capítulo actualizado correctamente!');
     }
 }

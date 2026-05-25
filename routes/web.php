@@ -28,43 +28,62 @@ Route::get('/dashboard', function () {
     return view('inicio', compact('featuredBooks', 'recommendedBooks', 'freeStories', 'myStories'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// 4. RUTA PARA TU PANEL ACTUALIZADA CON NOTIFICACIONES Y DESCARGAS
+// 4. RUTA PARA TU PANEL
 Route::get('/panel', function () {
     $user = auth()->user();
 
     // 1. Historias que sigue el usuario
     $followedStories = $user->followedStories()->with('chapters')->get();
 
-    // 2. Comentarios recibidos en las obras del autor
-    // Buscamos los comentarios hechos en los capítulos que pertenecen a las historias de este usuario
+    // 2. Comentarios recibidos
     $receivedComments = collect();
     if ($user->role === 'author') {
         $receivedComments = \App\Models\Comment::with(['user', 'chapter.story'])
             ->whereHas('chapter.story', function($q) use ($user) {
                 $q->where('user_id', $user->id);
             })
-            // Opcional: no mostrar los propios comentarios del autor
-            //->where('user_id', '!=', $user->id)
             ->latest()
-            ->take(5) // Mostramos los últimos 5
+            ->take(5)
             ->get();
     }
 
-    // 3. Libros digitales comprados por el usuario
-    // Buscamos los pedidos completados y obtenemos sus items que sean libros digitales
+    // 3. Libros digitales comprados (SOLUCIÓN AL BUG: whereIn con 'completado' y 'completed')
     $digitalPurchases = \App\Models\OrderItem::with('book')
         ->whereHas('order', function($q) use ($user) {
             $q->where('user_id', $user->id)
-              ->where('status', 'completed');
+              ->whereIn('status', ['completed', 'completado']); // <-- CORREGIDO AQUÍ
         })
         ->whereHas('book', function($q) {
             $q->where('is_digital', true);
         })
         ->latest()
-        ->get();
+        ->get()
+        ->unique('book_id')
+        ->take(5);
 
     return view('panel', compact('followedStories', 'receivedComments', 'digitalPurchases'));
 })->middleware(['auth', 'verified'])->name('panel');
+
+// 5. NUEVA RUTA: INVENTARIO DIGITAL
+Route::get('/inventario', function () {
+    $user = auth()->user();
+    
+    // Todos los libros digitales comprados
+    $inventory = \App\Models\OrderItem::with('book')
+        ->whereHas('order', function($q) use ($user) {
+            $q->where('user_id', $user->id)
+              ->whereIn('status', ['completed', 'completado']);
+        })
+        ->whereHas('book', function($q) {
+            $q->where('is_digital', true);
+        })
+        ->latest()
+        ->get()
+        ->unique('book_id');
+
+    return view('inventory.index', compact('inventory'));
+})->middleware(['auth', 'verified'])->name('inventory.index');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -82,12 +101,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     
-    // Checkout (Pasarela de Pago)
+    // Checkout
     Route::get('/checkout', [OrderController::class, 'checkoutView'])->name('checkout.index');
     Route::post('/checkout', [OrderController::class, 'checkout'])->name('checkout.process');
 });
 
-Route::resource('stories.chapters', ChapterController::class)->only(['create', 'store', 'show']);
+// AHORA PERMITIMOS TODAS LAS RUTAS DE CAPÍTULOS (Incluida la edición)
+Route::resource('stories.chapters', ChapterController::class);
 
 // Rutas de la Tienda (Libros de pago)
 Route::get('/shop', [BookController::class, 'index'])->name('shop.index');
@@ -96,7 +116,7 @@ Route::get('/shop/book/{book}', [BookController::class, 'show'])->name('shop.sho
 // Botón de Seguir Historia
 Route::post('/stories/{story}/follow', [StoryController::class, 'toggleFollow'])->name('stories.follow');
 
-// La Biblioteca de la Comunidad (Historias gratuitas)
+// La Biblioteca de la Comunidad
 Route::get('/comunidad', [CommunityController::class, 'index'])->name('community.index');
 
 // Ruta para vender una historia

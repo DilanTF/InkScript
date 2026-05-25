@@ -30,6 +30,13 @@
                        style="text-decoration: none;">
                         {{ __('Tienda') }}
                     </a>
+                    
+                    <!-- NUEVO: Enlace Directo al Inventario -->
+                    <a href="{{ route('inventory.index') }}" 
+                       class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-bold leading-5 transition duration-150 ease-in-out hover:text-[#744E36] {{ request()->routeIs('inventory.*') ? 'border-[#744E36] text-[#744E36]' : 'border-transparent text-gray-500' }}"
+                       style="text-decoration: none;">
+                        {{ __('Mi Inventario') }}
+                    </a>
 
                     @if(auth()->user() && auth()->user()->role === 'author')
                         <a href="{{ route('stories.index') }}" 
@@ -77,6 +84,10 @@
                         <a href="{{ route('panel') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#744E36] transition-colors" style="font-weight: 500;">
                             🎛️ Mi Panel
                         </a>
+                        
+                        <a href="{{ route('inventory.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#744E36] transition-colors" style="font-weight: 500;">
+                            ☁️ Mi Inventario
+                        </a>
 
                         <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#744E36] transition-colors" style="font-weight: 500;">
                             👤 Mi Perfil
@@ -118,6 +129,7 @@
         </div>
     </div>
 
+    <!-- ENLACES VERSIÓN MÓVIL -->
     <div id="mobile-menu" class="hidden sm:hidden border-t border-gray-200 bg-white shadow-lg relative z-50">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="font-medium">
@@ -130,6 +142,10 @@
 
             <x-responsive-nav-link :href="route('shop.index')" :active="request()->routeIs('shop.*')" class="font-medium">
                 {{ __('Tienda') }}
+            </x-responsive-nav-link>
+            
+            <x-responsive-nav-link :href="route('inventory.index')" :active="request()->routeIs('inventory.*')" class="font-medium">
+                {{ __('Mi Inventario') }}
             </x-responsive-nav-link>
 
             @if(auth()->user() && auth()->user()->role === 'author')
@@ -148,6 +164,9 @@
             <div class="space-y-1">
                 <x-responsive-nav-link :href="route('panel')" class="font-medium text-gray-700">
                     🎛️ Mi Panel
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('inventory.index')" class="font-medium text-gray-700">
+                    ☁️ Mi Inventario
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('profile.edit')" class="font-medium text-gray-700">
                     👤 Mi Perfil

@@ -2,27 +2,28 @@
     <div class="py-8 bg-[#F9F7F2] min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
-            <!-- Contenedor Flex para separar Menú Lateral y Contenido -->
             <div class="flex flex-col md:flex-row gap-8">
 
-                <!-- 1. SIDEBAR (Menú Lateral Marrón) -->
+                <!-- 1. SIDEBAR -->
                 <div class="w-full md:w-64 flex-shrink-0">
                     <div class="bg-[#744E36] rounded-3xl shadow-xl overflow-hidden sticky top-24">
                         <nav class="flex flex-col py-4">
-                            <!-- Enlaces del menú -->
-                            <a href="{{ route('profile.edit') }}" class="px-8 py-4 text-white text-lg font-bold hover:bg-[#5c3d2a] transition border-l-4 border-transparent hover:border-white">
+                            <a href="{{ route('profile.edit') }}" class="px-8 py-4 text-white text-lg font-semibold hover:bg-[#5c3d2a] transition border-l-4 border-transparent hover:border-white">
                                 Perfil
                             </a>
-                            <a href="{{ route('panel') }}" class="px-8 py-4 text-white text-lg font-bold bg-[#5c3d2a] border-l-4 border-white transition">
+                            <a href="{{ route('panel') }}" class="px-8 py-4 text-white text-lg font-semibold bg-[#5c3d2a] border-l-4 border-white transition">
                                 Mi Panel
                             </a>
-                            <a href="{{ route('orders.index') }}" class="px-8 py-4 text-white text-lg font-bold hover:bg-[#5c3d2a] transition border-l-4 border-transparent hover:border-white">
+                            <!-- NUEVO ENLACE AL INVENTARIO -->
+                            <a href="{{ route('inventory.index') }}" class="px-8 py-4 text-white text-lg font-semibold hover:bg-[#5c3d2a] transition border-l-4 border-transparent hover:border-white">
+                                Mi Inventario
+                            </a>
+                            <a href="{{ route('orders.index') }}" class="px-8 py-4 text-white text-lg font-semibold hover:bg-[#5c3d2a] transition border-l-4 border-transparent hover:border-white">
                                 Mis Compras
                             </a>
                             
-                            <!-- Opciones exclusivas para Autores -->
                             @if(auth()->user()->role === 'author')
-                                <a href="{{ route('stories.index') }}" class="px-8 py-4 text-white text-lg font-bold hover:bg-[#5c3d2a] transition border-l-4 border-transparent hover:border-white">
+                                <a href="{{ route('stories.index') }}" class="px-8 py-4 text-white text-lg font-semibold hover:bg-[#5c3d2a] transition border-l-4 border-transparent hover:border-white">
                                     Mis Publicaciones
                                 </a>
                             @endif
@@ -33,7 +34,6 @@
                 <!-- 2. CONTENIDO PRINCIPAL -->
                 <div class="flex-grow bg-white rounded-3xl shadow-sm p-8 md:p-10 border border-gray-100">
                     
-                    <!-- Cabecera del panel -->
                     <div class="mb-10 pb-6 border-b border-gray-100 flex justify-between items-center">
                         <h2 class="text-3xl md:text-4xl font-black text-gray-900" style="font-family: 'Instrument Sans', sans-serif;">Panel de Control</h2>
                         
@@ -47,7 +47,7 @@
 
                     <div class="space-y-12">
                         
-                        <!-- SECCIÓN 1: NOTIFICACIONES DE HISTORIAS SEGUIDAS -->
+                        <!-- SECCIÓN 1: NOTIFICACIONES -->
                         <section>
                             <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2" style="font-family: 'Instrument Sans', sans-serif;">
                                 <span class="text-amber-500">🔔</span> Actualizaciones de tus lecturas
@@ -92,10 +92,10 @@
                             @endif
                         </section>
 
-                        <!-- SECCIÓN 2: DESCARGAS DIGITALES -->
+                        <!-- SECCIÓN 2: DESCARGAS DIGITALES (LIMITADO A 5) -->
                         <section>
                             <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2" style="font-family: 'Instrument Sans', sans-serif;">
-                                <span class="text-indigo-500">☁️</span> Mis Descargas Digitales
+                                <span class="text-indigo-500">☁️</span> Mis Descargas Recientes
                             </h3>
 
                             @if(isset($digitalPurchases) && $digitalPurchases->count() > 0)
@@ -116,17 +116,24 @@
                                                     <h4 class="font-bold text-gray-900">{{ $item->book->title }}</h4>
                                                     <p class="text-xs text-gray-500 mt-1 flex items-center gap-1">
                                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                                        Comprado: {{ $item->created_at->format('d/m/Y') }}
+                                                        Adquirido: {{ $item->created_at->format('d/m/Y') }}
                                                     </p>
                                                 </div>
                                             </div>
-                                            <!-- Botón simulado de descarga (se podría enlazar a una ruta real de descarga de PDF en el futuro) -->
                                             <a href="#" onclick="alert('Funcionalidad de descarga de PDF en desarrollo.'); return false;" class="px-4 py-2 bg-indigo-50 text-indigo-700 text-xs font-bold rounded-lg hover:bg-indigo-100 transition-colors flex items-center gap-2 border border-indigo-100">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                                <span class="hidden sm:inline">Descargar PDF / EPUB</span>
+                                                <span class="hidden sm:inline">Descargar</span>
                                             </a>
                                         </div>
                                     @endforeach
+                                    
+                                    <!-- BOTÓN PARA VER TODO EL INVENTARIO -->
+                                    <div class="pt-4 text-center">
+                                        <a href="{{ route('inventory.index') }}" class="inline-flex items-center gap-2 text-indigo-600 font-bold text-sm hover:underline">
+                                            Ver todo mi inventario completo
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                        </a>
+                                    </div>
                                 </div>
                             @else
                                 <div class="bg-gray-50 px-6 py-6 rounded-2xl border border-dashed border-gray-200 text-center">
@@ -135,17 +142,16 @@
                             @endif
                         </section>
 
-                        <!-- SECCIÓN 3: ACTIVIDAD COMO AUTOR (Solo para Autores) -->
+                        <!-- SECCIÓN 3: ACTIVIDAD COMO AUTOR -->
                         @if(auth()->user()->role === 'author')
                             <section>
                                 <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2 justify-between" style="font-family: 'Instrument Sans', sans-serif;">
                                     <div class="flex items-center gap-2">
-                                        <span class="text-green-500">💬</span> Comentarios Recientes en tus Obras
+                                        <span class="text-green-500">💬</span> Comentarios en tus Obras
                                     </div>
-                                    <!-- Botón para añadir capítulo que redirige a "Mis Historias" -->
                                     <a href="{{ route('stories.index') }}" class="text-xs px-3 py-1.5 bg-[#744E36] text-white rounded-lg font-bold hover:bg-[#5c3d2a] transition shadow-sm flex items-center gap-1">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                        Añadir Capítulo a Obra
+                                        Añadir Capítulo
                                     </a>
                                 </h3>
 
@@ -182,7 +188,7 @@
 
                     </div>
 
-                    <!-- Cuadricula de Acciones Secundarias (Con enlaces reales) -->
+                    <!-- Enlaces Rápidos -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12 border-t border-gray-100 pt-8">
                         <a href="{{ route('shop.index') }}" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:border-[#744E36] hover:shadow transition group cursor-pointer block">
                             <h4 class="font-bold text-gray-900 mb-2 group-hover:text-[#744E36] transition-colors flex items-center justify-between">
