@@ -8,7 +8,7 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\CommunityController; // AÑADIDO: Importamos el controlador de la comunidad
+use App\Http\Controllers\CommunityController;
 
 // 1. Ruta principal (Portada) -> REDIRIGE AL LOGIN
 Route::get('/', function () {
@@ -28,9 +28,42 @@ Route::get('/dashboard', function () {
     return view('inicio', compact('featuredBooks', 'recommendedBooks', 'freeStories', 'myStories'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// 4. RUTA PARA TU PANEL
+// 4. RUTA PARA TU PANEL ACTUALIZADA CON NOTIFICACIONES Y DESCARGAS
 Route::get('/panel', function () {
-    return view('panel');
+    $user = auth()->user();
+
+    // 1. Historias que sigue el usuario
+    $followedStories = $user->followedStories()->with('chapters')->get();
+
+    // 2. Comentarios recibidos en las obras del autor
+    // Buscamos los comentarios hechos en los capítulos que pertenecen a las historias de este usuario
+    $receivedComments = collect();
+    if ($user->role === 'author') {
+        $receivedComments = \App\Models\Comment::with(['user', 'chapter.story'])
+            ->whereHas('chapter.story', function($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })
+            // Opcional: no mostrar los propios comentarios del autor
+            //->where('user_id', '!=', $user->id)
+            ->latest()
+            ->take(5) // Mostramos los últimos 5
+            ->get();
+    }
+
+    // 3. Libros digitales comprados por el usuario
+    // Buscamos los pedidos completados y obtenemos sus items que sean libros digitales
+    $digitalPurchases = \App\Models\OrderItem::with('book')
+        ->whereHas('order', function($q) use ($user) {
+            $q->where('user_id', $user->id)
+              ->where('status', 'completed');
+        })
+        ->whereHas('book', function($q) {
+            $q->where('is_digital', true);
+        })
+        ->latest()
+        ->get();
+
+    return view('panel', compact('followedStories', 'receivedComments', 'digitalPurchases'));
 })->middleware(['auth', 'verified'])->name('panel');
 
 Route::middleware('auth')->group(function () {
@@ -60,7 +93,10 @@ Route::resource('stories.chapters', ChapterController::class)->only(['create', '
 Route::get('/shop', [BookController::class, 'index'])->name('shop.index');
 Route::get('/shop/book/{book}', [BookController::class, 'show'])->name('shop.show');
 
-// Ruta de la Biblioteca de la Comunidad (Historias gratuitas)
+// Botón de Seguir Historia
+Route::post('/stories/{story}/follow', [StoryController::class, 'toggleFollow'])->name('stories.follow');
+
+// La Biblioteca de la Comunidad (Historias gratuitas)
 Route::get('/comunidad', [CommunityController::class, 'index'])->name('community.index');
 
 // Ruta para vender una historia

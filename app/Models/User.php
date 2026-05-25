@@ -5,7 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\HasMany; // Importación obligatoria
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany; // Importación necesaria para "Seguidores"
 
 class User extends Authenticatable
 {
@@ -48,11 +49,18 @@ class User extends Authenticatable
     }
 
     /**
-     * NUEVO: Un usuario puede realizar muchos pedidos.
-     * Esta es la función que elimina tu error.
+     * Un usuario puede realizar muchos pedidos (Compras en tienda).
      */
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    /**
+     * NUEVO: Un usuario puede seguir muchas historias de la comunidad.
+     */
+    public function followedStories(): BelongsToMany
+    {
+        return $this->belongsToMany(Story::class, 'story_user')->withTimestamps();
     }
 }

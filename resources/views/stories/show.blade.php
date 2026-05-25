@@ -17,9 +17,22 @@
                 <svg class="absolute right-0 top-0 text-white opacity-5 w-64 h-64 transform translate-x-16 -translate-y-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                 
                 <div class="flex-grow z-10 text-center md:text-left">
-                    <span class="px-3 py-1 bg-white/20 text-white text-xs font-bold uppercase tracking-widest rounded-full backdrop-blur-sm border border-white/30 mb-4 inline-block">
-                        Obra Original
-                    </span>
+                    
+                    <!-- ETIQUETAS DE GÉNEROS SEPARADAS -->
+                    <div class="flex flex-wrap gap-2 justify-center md:justify-start mb-4">
+                        <span class="px-3 py-1 bg-white/20 text-white text-xs font-bold uppercase tracking-widest rounded-full backdrop-blur-sm border border-white/30 inline-block">
+                            Obra Original
+                        </span>
+                        
+                        @if($story->genre)
+                            @foreach(explode(', ', $story->genre) as $g)
+                                <span class="px-3 py-1 bg-amber-500/20 text-amber-100 text-xs font-bold uppercase tracking-widest rounded-full backdrop-blur-sm border border-amber-500/30 inline-block">
+                                    {{ trim($g) }}
+                                </span>
+                            @endforeach
+                        @endif
+                    </div>
+
                     <h1 class="text-4xl md:text-6xl font-black text-white leading-tight mb-4" style="font-family: 'Instrument Sans', sans-serif;">
                         {{ $story->title }}
                     </h1>
@@ -28,6 +41,28 @@
                         <span class="w-1.5 h-1.5 rounded-full bg-white/50"></span>
                         <span>{{ $story->chapters()->count() }} Capítulos</span>
                     </p>
+                    
+                    <!-- BOTÓN DE SEGUIMIENTO (Solo si no eres el autor) -->
+                    @if(auth()->check() && auth()->id() !== $story->user_id)
+                        <div class="mt-8 flex justify-center md:justify-start">
+                            <form action="{{ route('stories.follow', $story) }}" method="POST">
+                                @csrf
+                                @if(auth()->user()->followedStories->contains($story->id))
+                                    <!-- Botón: Dejar de seguir -->
+                                    <button type="submit" class="px-6 py-2.5 bg-white/20 text-white font-bold rounded-full hover:bg-red-500/80 transition-all backdrop-blur-sm border border-white/50 flex items-center gap-2 shadow-sm">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
+                                        Siguiendo
+                                    </button>
+                                @else
+                                    <!-- Botón: Seguir -->
+                                    <button type="submit" class="px-6 py-2.5 bg-white text-[#744E36] font-black rounded-full hover:bg-gray-100 transition-all shadow-lg flex items-center gap-2 transform hover:-translate-y-0.5">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                                        Seguir Historia
+                                    </button>
+                                @endif
+                            </form>
+                        </div>
+                    @endif
                 </div>
             </div>
 
@@ -119,7 +154,7 @@
 
                                                         <!-- Select Género -->
                                                         <div>
-                                                            <label for="genre" class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">Género Literario</label>
+                                                            <label for="genre" class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">Género Literario Principal</label>
                                                             <select name="genre" id="genre" class="focus:ring-amber-500 focus:border-amber-500 block w-full px-4 py-3 sm:text-base border-gray-200 rounded-xl font-bold text-gray-700 bg-gray-50 transition-colors cursor-pointer" required>
                                                                 <option value="Fantasía">Fantasía</option>
                                                                 <option value="Ciencia Ficción">Ciencia Ficción</option>

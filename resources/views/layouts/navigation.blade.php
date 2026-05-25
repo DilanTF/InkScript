@@ -19,6 +19,18 @@
                         {{ __('Inicio') }}
                     </a>
 
+                    <a href="{{ route('community.index') }}" 
+                       class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-bold leading-5 transition duration-150 ease-in-out hover:text-[#744E36] {{ request()->routeIs('community.*') ? 'border-[#744E36] text-[#744E36]' : 'border-transparent text-gray-500' }}"
+                       style="text-decoration: none;">
+                        {{ __('Comunidad') }}
+                    </a>
+
+                    <a href="{{ route('shop.index') }}" 
+                       class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-bold leading-5 transition duration-150 ease-in-out hover:text-[#744E36] {{ request()->routeIs('shop.*') ? 'border-[#744E36] text-[#744E36]' : 'border-transparent text-gray-500' }}"
+                       style="text-decoration: none;">
+                        {{ __('Tienda') }}
+                    </a>
+
                     @if(auth()->user() && auth()->user()->role === 'author')
                         <a href="{{ route('stories.index') }}" 
                            class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-bold leading-5 transition duration-150 ease-in-out hover:text-[#744E36] {{ request()->routeIs('stories.*') ? 'border-[#744E36] text-[#744E36]' : 'border-transparent text-gray-500' }}"
@@ -26,12 +38,6 @@
                             {{ __('Mis Historias') }}
                         </a>
                     @endif
-
-                    <a href="{{ route('shop.index') }}" 
-                       class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-bold leading-5 transition duration-150 ease-in-out hover:text-[#744E36] {{ request()->routeIs('shop.*') ? 'border-[#744E36] text-[#744E36]' : 'border-transparent text-gray-500' }}"
-                       style="text-decoration: none;">
-                        {{ __('Tienda') }}
-                    </a>
                 </div>
             </div>
 
@@ -118,15 +124,19 @@
                 {{ __('Inicio') }}
             </x-responsive-nav-link>
 
+            <x-responsive-nav-link :href="route('community.index')" :active="request()->routeIs('community.*')" class="font-medium">
+                {{ __('Comunidad') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('shop.index')" :active="request()->routeIs('shop.*')" class="font-medium">
+                {{ __('Tienda') }}
+            </x-responsive-nav-link>
+
             @if(auth()->user() && auth()->user()->role === 'author')
                 <x-responsive-nav-link :href="route('stories.index')" :active="request()->routeIs('stories.*')" class="font-medium">
                     {{ __('Mis Historias') }}
                 </x-responsive-nav-link>
             @endif
-
-            <x-responsive-nav-link :href="route('shop.index')" :active="request()->routeIs('shop.*')" class="font-medium">
-                {{ __('Tienda') }}
-            </x-responsive-nav-link>
         </div>
 
         <div class="pt-4 pb-1 border-t border-gray-200 bg-gray-50">

@@ -20,7 +20,6 @@
                 
                 <!-- Columna Izquierda: Inspiración y Consejos -->
                 <div class="md:w-1/3 bg-gradient-to-br from-[#744E36] to-[#5c3d2a] p-8 md:p-12 flex flex-col justify-center text-white relative overflow-hidden">
-                    <!-- Marca de agua decorativa -->
                     <svg class="absolute right-0 bottom-0 text-white opacity-10 w-48 h-48 transform translate-x-12 translate-y-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                     
                     <div class="relative z-10">
@@ -29,7 +28,7 @@
                         </div>
                         <h3 class="text-2xl font-black mb-4 leading-tight" style="font-family: 'Instrument Sans', sans-serif;">Toda gran historia empieza con una idea.</h3>
                         <p class="text-white/80 text-sm leading-relaxed mb-6">
-                            Define el título y la sinopsis de tu obra. No te preocupes si no es perfecto ahora mismo, podrás modificar ambos campos en cualquier momento desde tu estudio de autor.
+                            Define el título, selecciona los géneros en los que encaja tu obra y escribe una sinopsis atrapante. Puedes elegir varios géneros a la vez para posicionar mejor tu historia en la comunidad.
                         </p>
                     </div>
                 </div>
@@ -52,13 +51,33 @@
                             @enderror
                         </div>
 
+                        <!-- Campo: Selección de Géneros (NUEVO) -->
+                        <div class="mb-8">
+                            <label class="block font-bold text-sm uppercase tracking-wider mb-3" style="color: #744E36;">
+                                Categorías / Géneros (Elige al menos 1)
+                            </label>
+                            <div class="grid grid-cols-2 lg:grid-cols-3 gap-3">
+                                @foreach($genres as $genre)
+                                    <label class="flex items-center space-x-3 cursor-pointer group bg-gray-50 border border-gray-200 p-3 rounded-xl hover:border-[#744E36] hover:bg-white transition-all shadow-sm">
+                                        <input type="checkbox" name="genres[]" value="{{ $genre }}" 
+                                               class="w-5 h-5 rounded border-gray-300 text-[#744E36] focus:ring-[#744E36] transition-colors cursor-pointer"
+                                               {{ (is_array(old('genres')) && in_array($genre, old('genres'))) ? 'checked' : '' }}>
+                                        <span class="text-gray-700 font-bold group-hover:text-[#744E36] transition-colors text-sm">{{ $genre }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                            @error('genres')
+                                <span class="text-red-500 text-xs font-bold mt-2 block">{{ $message }}</span>
+                            @enderror
+                        </div>
+
                         <!-- Campo: Sinopsis -->
                         <div class="mb-10">
                             <label for="description" class="block font-bold text-sm uppercase tracking-wider mb-2" style="color: #744E36;">
                                 Sinopsis Inicial
                             </label>
                             <p class="text-xs text-gray-500 mb-3 font-medium">Escribe un breve resumen para tener clara la premisa de tu historia.</p>
-                            <textarea name="description" id="description" rows="7" placeholder="En un reino lejano donde la magia ha sido olvidada..."
+                            <textarea name="description" id="description" rows="5" placeholder="En un reino lejano donde la magia ha sido olvidada..."
                                       class="block w-full border-gray-200 bg-gray-50 focus:bg-white focus:border-[#744E36] focus:ring-[#744E36] rounded-xl shadow-sm px-4 py-3 resize-none transition-colors text-gray-800 leading-relaxed" 
                                       required>{{ old('description') }}</textarea>
                             @error('description')

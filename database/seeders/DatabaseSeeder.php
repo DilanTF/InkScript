@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. TUS USUARIOS PRINCIPALES (No se tocan si ya existen)
+        // 1. TUS USUARIOS PRINCIPALES
         $dilan = User::firstOrCreate(
             ['email' => 'dilan@inkscript.com'],
             ['name' => 'Dilan Autor', 'password' => Hash::make('password123'), 'role' => 'author']
@@ -25,8 +25,12 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Lector Entusiasta', 'password' => Hash::make('password123'), 'role' => 'reader']
         );
 
-        // 2. CREAR AUTORES FICTICIOS (Solo si no existen)
-        $nombresAutores = ['Laura Valenzuela', 'Marcos Domínguez', 'Sofía Reyes'];
+        // 2. CREAR AUTORES FICTICIOS (Aumentado a 10)
+        $nombresAutores = [
+            'Laura Valenzuela', 'Marcos Domínguez', 'Sofía Reyes', 'Carlos Ruiz', 
+            'Elena Martín', 'David Costa', 'Ana Silva', 'Jorge Ramos', 
+            'Lucía Gómez', 'Pablo Torres', 'Isabel Fernández', 'Miguel Ángel López', 'Carmen Díaz', 'Andrés García', 'Marta Sánchez', 'Diego Herrera', 'Sara Jiménez', 'Fernando Castro', 'Natalia Ortiz', 'Ricardo Morales'
+        ];
         $autoresFicticios = [];
 
         foreach ($nombresAutores as $index => $nombre) {
@@ -39,58 +43,68 @@ class DatabaseSeeder extends Seeder
         $usuariosComentaristas = array_merge([$lector], $autoresFicticios);
 
         // --- DICCIONARIO PARA TEXTOS ---
-        $sustantivos = ['Secreto', 'Destino', 'Reino', 'Corazón', 'Caballero', 'Mundo', 'Laberinto', 'Espejo', 'Alma', 'Silencio'];
-        $adjetivos = ['Oscuro', 'Brillante', 'Perdido', 'Eterno', 'Roto', 'Misterioso', 'Oculto', 'Sagrado', 'Letal', 'Mágico'];
+        $sustantivos = ['Secreto', 'Destino', 'Reino', 'Corazón', 'Caballero', 'Mundo', 'Laberinto', 'Espejo', 'Alma', 'Silencio', 'Viento', 'Mar', 'Fuego', 'Dragón', 'Cielo', 'Bosque', 'Sombra', 'Luz', 'Niebla', 'Eclipse', 'Leyenda'];
+        $adjetivos = ['Oscuro', 'Brillante', 'Perdido', 'Eterno', 'Roto', 'Misterioso', 'Oculto', 'Sagrado', 'Letal', 'Mágico', 'Rojo', 'Helado', 'Infinito', 'Salvaje', 'Sombra', 'Radiante', 'Profundo', 'Veloz', 'Feroz', 'Trágico'];
+        $generos = ['Fantasía', 'Ciencia Ficción', 'Romance', 'Terror', 'Misterio', 'Aventura', 'Histórica', 'Apocalipsis', 'Distopía', 'Realismo Mágico', 'Thriller', 'Ficción General', 'Novela Negra', 'Cyberpunk', 'Steampunk'];
+        
         $parrafosContenido = [
-            "El viento soplaba frío aquella noche. Nadie en el pueblo sospechaba lo que estaba a punto de ocurrir. Las sombras parecían alargarse de forma antinatural, reptando por las paredes de piedra de las casas más antiguas.",
-            "Habían pasado años desde la última vez que alguien pronunció su nombre en voz alta. Algunos decían que era una maldición; otros, simplemente un mito olvidado por el tiempo. Pero él sabía la verdad.",
-            "Cruzó el pasillo a pasos rápidos y silenciosos. En su mano derecha, sostenía el único artefacto capaz de detener la catástrofe. El corazón le latía con fuerza contra el pecho, amenazando con delatar su posición.",
-            "«No puedes huir de lo que llevas dentro», resonó la voz en su cabeza. Intentó ignorarla, pero la verdad era incuestionable. Cada decisión le había llevado a este preciso momento, al borde del abismo.",
-            "Finalmente, la luz del alba rompió el horizonte. El paisaje se tiñó de un naranja pálido que trajo consigo una frágil esperanza. Aún quedaba mucho camino por recorrer, pero por primera vez, sentía que no estaba solo."
+            "El viento soplaba frío aquella noche. Nadie en el pueblo sospechaba lo que estaba a punto de ocurrir. Las sombras parecían alargarse de forma antinatural, reptando por las paredes.",
+            "Habían pasado años desde la última vez que alguien pronunció su nombre en voz alta. Algunos decían que era una maldición; otros, simplemente un mito olvidado por el tiempo.",
+            "Cruzó el pasillo a pasos rápidos y silenciosos. En su mano derecha, sostenía el único artefacto capaz de detener la catástrofe.",
+            "«No puedes huir de lo que llevas dentro», resonó la voz en su cabeza. Intentó ignorarla, pero la verdad era incuestionable.",
+            "Finalmente, la luz del alba rompió el horizonte. El paisaje se tiñó de un naranja pálido que trajo consigo una frágil esperanza.",
+            "El mundo estaba a punto de cambiar para siempre.",
+            "Aquel día, el destino de todos se entrelazó de formas que nadie podría haber previsto. Lo que comenzó como un simple encuentro se convirtió en una aventura épica que desafiaría los límites de la realidad.",
+            "Sus ojos se encontraron por primera vez en medio de la multitud. Fue un instante fugaz, pero ambos supieron que algo especial había nacido en ese momento.",
+            "El misterio se profundizaba con cada pista que descubrían. Parecía que el enemigo siempre estaba un paso por delante, burlándose de sus esfuerzos por detenerlo.",
+            "En el corazón de la tormenta, encontraron la fuerza para seguir adelante. No importaba lo que les esperara, estaban decididos a enfrentarlo juntos, sin importar el costo."
         ];
         $textosComentarios = [
             "¡Me ha encantado este capítulo! La tensión está increíble.",
             "No me esperaba ese giro final. ¡Necesito el siguiente ya!",
-            "La forma en que describes los escenarios hace que me lo imagine como una película. Gran trabajo.",
+            "La forma en que describes los escenarios hace que me lo imagine como una película.",
             "Tengo una teoría sobre lo que va a pasar... espero no equivocarme.",
-            "Un poco lento al principio, pero el final compensa con creces. Sigue así.",
+            "Un poco lento al principio, pero el final compensa con creces.",
             "Increíble, simplemente increíble. Ya soy fan número uno de esta historia.",
-            "¿Cuándo subes la próxima parte? Me has dejado con la intriga."
+            "¿Cuándo subes la próxima parte? Me has dejado con la intriga.",
+            "La relación entre los personajes es tan realista, me siento como si los conociera de verdad.",
+            "¡Este capítulo me ha dejado sin aliento! La narrativa es magistral.",
+            "Me encanta cómo mezclas el misterio con la acción. Es adictivo.",
+            "Cada vez que leo un capítulo, me quedo pensando en las posibles teorías. ¡Eres un genio de la escritura!"
         ];
 
-        // 3. CREAR HISTORIAS DE PRUEBA (Solo si los autores ficticios no tienen historias)
-        $titulosHistorias = [
-            'La última frontera', 'Secretos del abismo',
-            'El reloj de arena', 'Caminos cruzados',
-            'Luces en la niebla', 'El viento del norte'
-        ];
-        
-        $historiaIndex = 0;
-        foreach ($autoresFicticios as $autor) {
-            // Comprobamos si este autor ya tiene historias. Si tiene, lo saltamos.
-            if ($autor->stories()->count() == 0) {
-                for ($i = 0; $i < 2; $i++) {
+        // 3. CREAR MULTITUD DE HISTORIAS DE PRUEBA
+        // Verificamos cuántas historias hay para no saturar si lo ejecutas varias veces
+        if (Story::count() < 25) {
+            foreach ($autoresFicticios as $autor) {
+                // Generar entre 2 y 4 historias por cada autor
+                $numHistorias = rand(2, 4);
+                for ($i = 0; $i < $numHistorias; $i++) {
                     $story = Story::create([
-                        'title' => $titulosHistorias[$historiaIndex],
-                        'description' => 'Una intrigante historia llena de misterios, aventuras y personajes inolvidables.',
+                        'title' => 'El ' . $sustantivos[array_rand($sustantivos)] . ' ' . $adjetivos[array_rand($adjetivos)],
+                        'description' => 'Una intrigante historia llena de misterios, aventuras y giros inesperados que atrapará al lector desde el primer capítulo.',
+                        'genre' => $generos[array_rand($generos)], // Añadimos el género aleatorio
                         'user_id' => $autor->id,
                     ]);
 
-                    $numCapitulos = rand(3, 6);
+                    // Añadir entre 3 y 8 capítulos por historia
+                    $numCapitulos = rand(3, 8);
                     for ($j = 1; $j <= $numCapitulos; $j++) {
                         $contenidoCapitulo = $parrafosContenido[array_rand($parrafosContenido)] . "\n\n" . 
                                              $parrafosContenido[array_rand($parrafosContenido)] . "\n\n" .
-                                             "Continuará en el próximo capítulo...";
+                                             "Continuará...";
 
                         $chapter = Chapter::create([
                             'story_id' => $story->id,
-                            'title' => 'Capítulo ' . $j . ': El ' . $sustantivos[array_rand($sustantivos)] . ' ' . $adjetivos[array_rand($adjetivos)],
+                            'title' => 'Capítulo ' . $j,
                             'content' => $contenidoCapitulo,
                             'order_number' => $j,
+                            'created_at' => now()->subDays(rand(1, 30))
                         ]);
 
-                        if (rand(1, 100) <= 70) {
-                            $numComentarios = rand(1, 4);
+                        // Generar comentarios masivos (80% de probabilidad de tener comentarios)
+                        if (rand(1, 100) <= 80) {
+                            $numComentarios = rand(1, 6);
                             for ($k = 0; $k < $numComentarios; $k++) {
                                 $usuarioAleatorio = $usuariosComentaristas[array_rand($usuariosComentaristas)];
                                 Comment::create([
@@ -102,51 +116,23 @@ class DatabaseSeeder extends Seeder
                             }
                         }
                     }
-                    $historiaIndex++;
                 }
-            } else {
-                $historiaIndex += 2; // Avanzamos los títulos para mantener la coherencia
             }
         }
 
-        // Crear historias de Dilan solo si no las has creado ya
-        if (!Story::where('title', 'El Eco de las Sombras')->exists()) {
-            Story::create([
-                'title' => 'El Eco de las Sombras',
-                'description' => 'Una aventura épica en un mundo donde las sombras cobran vida.',
-                'user_id' => $dilan->id,
-            ]);
-        }
-
-        if (!Story::where('title', 'Memorias Digitales')->exists()) {
-            Story::create([
-                'title' => 'Memorias Digitales',
-                'description' => 'En el año 2084, los recuerdos se pueden comprar y vender.',
-                'user_id' => $dilan->id,
-            ]);
-        }
-
-        // 4. CREAR LIBROS PARA LA TIENDA (Solo si hay pocos libros)
-        $generos = ['Fantasía', 'Ciencia Ficción', 'Romance', 'Terror', 'Misterio', 'Aventura', 'Histórica'];
-        
-        // Si hay menos de 10 libros en la tienda, rellenamos hasta llegar a 50
+        // 4. CREAR LIBROS PARA LA TIENDA
         $librosActuales = Book::count();
-        if ($librosActuales < 10) {
+        if ($librosActuales < 40) {
             $librosACrear = 50 - $librosActuales;
             for ($i = 0; $i < $librosACrear; $i++) {
                 $esDigital = rand(1, 100) <= 60; 
                 $vieneDeAutor = rand(1, 100) <= 30; 
                 $autorAleatorio = $vieneDeAutor ? $autoresFicticios[array_rand($autoresFicticios)]->id : null;
                 
-                $tituloAleatorio = 'El ' . $sustantivos[array_rand($sustantivos)] . ' ' . $adjetivos[array_rand($adjetivos)];
-                if (rand(1, 2) == 1) { 
-                    $tituloAleatorio .= ' Parte ' . rand(1, 3);
-                }
-
                 Book::create([
-                    'title' => $tituloAleatorio,
+                    'title' => 'La leyenda del ' . $sustantivos[array_rand($sustantivos)] . ' ' . $adjetivos[array_rand($adjetivos)],
                     'genre' => $generos[array_rand($generos)],
-                    'description' => 'Un fascinante viaje literario que explora las profundidades de la emoción humana.',
+                    'description' => 'Un fascinante viaje literario editado en formato profesional, listo para devorar.',
                     'price' => rand(400, 3500) / 100,
                     'stock' => $esDigital ? 9999 : rand(0, 50),
                     'is_digital' => $esDigital,
@@ -158,8 +144,6 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        echo "¡Semilla ejecutada en modo NO destructivo! ✨\n";
-        echo "- Tus datos manuales no se han borrado.\n";
-        echo "- Se han inyectado datos de prueba solo donde faltaban.\n";
+        echo "¡Inyección de datos masiva completada! 📚✨\n";
     }
 }

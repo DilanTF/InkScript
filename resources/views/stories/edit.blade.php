@@ -12,7 +12,7 @@
                 <h2 class="text-4xl font-black text-gray-900" style="font-family: 'Instrument Sans', sans-serif;">
                     Configuración de la Obra
                 </h2>
-                <p class="text-gray-500 mt-2 text-lg">Modifica los detalles principales de tu manuscrito.</p>
+                <p class="text-gray-500 mt-2 text-lg">Modifica los detalles principales o reasigna los géneros de tu manuscrito.</p>
             </div>
 
             <!-- Contenedor principal estilo tarjeta doble -->
@@ -33,10 +33,8 @@
                     <!-- Metadatos de la historia -->
                     <div class="w-full bg-white p-5 rounded-2xl border border-gray-200 text-left shadow-sm">
                         <div class="mb-4">
-                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Estado del Proyecto</p>
-                            <p class="text-sm font-bold text-amber-600 flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> En Redacción
-                            </p>
+                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Géneros actuales</p>
+                            <p class="text-sm font-bold text-gray-800">{{ $story->genre ?? 'Sin asignar' }}</p>
                         </div>
                         <div class="pt-4 border-t border-gray-50">
                             <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Capítulos Escritos</p>
@@ -64,13 +62,33 @@
                             @enderror
                         </div>
 
+                        <!-- Campo: Selección de Géneros (NUEVO) -->
+                        <div class="mb-8">
+                            <label class="block font-bold text-sm uppercase tracking-wider mb-3" style="color: #744E36;">
+                                Modificar Categorías / Géneros
+                            </label>
+                            <div class="grid grid-cols-2 lg:grid-cols-3 gap-3">
+                                @foreach($genres as $genre)
+                                    <label class="flex items-center space-x-3 cursor-pointer group bg-gray-50 border border-gray-200 p-3 rounded-xl hover:border-[#744E36] hover:bg-white transition-all shadow-sm">
+                                        <input type="checkbox" name="genres[]" value="{{ $genre }}" 
+                                               class="w-5 h-5 rounded border-gray-300 text-[#744E36] focus:ring-[#744E36] transition-colors cursor-pointer"
+                                               {{ (is_array(old('genres', $selectedGenres)) && in_array($genre, old('genres', $selectedGenres))) ? 'checked' : '' }}>
+                                        <span class="text-gray-700 font-bold group-hover:text-[#744E36] transition-colors text-sm">{{ $genre }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                            @error('genres')
+                                <span class="text-red-500 text-xs font-bold mt-2 block">{{ $message }}</span>
+                            @enderror
+                        </div>
+
                         <!-- Campo: Sinopsis -->
                         <div class="mb-10">
                             <label for="description" class="block font-bold text-sm uppercase tracking-wider mb-2" style="color: #744E36;">
                                 Sinopsis / Contraportada
                             </label>
                             <p class="text-xs text-gray-500 mb-3 font-medium">Un buen resumen es clave para atrapar a tus futuros lectores. Genera intriga sin revelar el gran final.</p>
-                            <textarea name="description" id="description" rows="7" 
+                            <textarea name="description" id="description" rows="5" 
                                       class="block w-full border-gray-200 bg-gray-50 focus:bg-white focus:border-[#744E36] focus:ring-[#744E36] rounded-xl shadow-sm px-4 py-3 resize-none transition-colors text-gray-800 leading-relaxed" 
                                       required>{{ old('description', $story->description) }}</textarea>
                             @error('description')

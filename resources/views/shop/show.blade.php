@@ -23,11 +23,24 @@
                 </a>
             </div>
 
-            <!-- Alertas de éxito -->
+            <!-- Alertas de éxito (ACTUALIZADA CON BOTONES DE ACCIÓN) -->
             @if(session('success'))
-                <div class="p-4 bg-green-50 border border-green-200 text-green-700 shadow-sm rounded-2xl flex items-center">
-                    <svg class="w-5 h-5 mr-3 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                    {{ session('success') }}
+                <div class="p-4 bg-green-50 border border-green-200 text-green-700 shadow-sm rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-3 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                        <span class="font-medium">{{ session('success') }}</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <!-- Botón Seguir Comprando -->
+                        <a href="{{ route('shop.index') }}" class="text-sm font-bold text-green-800 hover:text-green-900 hover:underline transition-colors whitespace-nowrap">
+                            Seguir comprando
+                        </a>
+                        <!-- Botón Ir a la Cesta -->
+                        <a href="{{ route('cart.index') }}" class="px-5 py-2 bg-green-600 text-white text-sm font-bold rounded-full hover:bg-green-700 transition-all shadow-sm flex items-center gap-2 whitespace-nowrap transform hover:-translate-y-0.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                            Ver mi cesta
+                        </a>
+                    </div>
                 </div>
             @endif
 
