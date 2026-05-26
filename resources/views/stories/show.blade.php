@@ -3,11 +3,17 @@
     <div class="py-12 bg-[#F9F7F2] min-h-screen">
         <div class="max-w-6xl mx-auto sm:px-6 lg:px-8 space-y-8">
             
-            <!-- Alertas de éxito -->
+            <!-- Alertas de éxito y error -->
             @if(session('success'))
                 <div class="p-4 bg-green-50 border border-green-200 text-green-700 shadow-sm rounded-2xl flex items-center">
                     <svg class="w-5 h-5 mr-3 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
                     {{ session('success') }}
+                </div>
+            @endif
+            @if(session('error'))
+                <div class="p-4 bg-red-50 border border-red-200 text-red-700 shadow-sm rounded-2xl flex items-center">
+                    <svg class="w-5 h-5 mr-3 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>
+                    {{ session('error') }}
                 </div>
             @endif
 
@@ -17,19 +23,13 @@
                 <svg class="absolute right-0 top-0 text-white opacity-5 w-64 h-64 transform translate-x-16 -translate-y-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                 
                 <div class="flex-grow z-10 text-center md:text-left">
-                    
-                    <!-- ETIQUETAS DE ESTADO Y GÉNEROS -->
                     <div class="flex flex-wrap gap-2 justify-center md:justify-start mb-4">
-                        
-                        <!-- NUEVO: Etiqueta de Estado de Publicación -->
                         <span class="px-3 py-1 bg-emerald-500/20 text-emerald-100 text-xs font-bold uppercase tracking-widest rounded-full backdrop-blur-sm border border-emerald-500/30 inline-block">
                             {{ $story->status ?? 'En Emisión' }}
                         </span>
-
                         <span class="px-3 py-1 bg-white/20 text-white text-xs font-bold uppercase tracking-widest rounded-full backdrop-blur-sm border border-white/30 inline-block">
                             Obra Original
                         </span>
-                        
                         @if($story->genre)
                             @foreach(explode(', ', $story->genre) as $g)
                                 <span class="px-3 py-1 bg-amber-500/20 text-amber-100 text-xs font-bold uppercase tracking-widest rounded-full backdrop-blur-sm border border-amber-500/30 inline-block">
@@ -48,19 +48,16 @@
                         <span>{{ $story->chapters()->count() }} Capítulos</span>
                     </p>
                     
-                    <!-- BOTÓN DE SEGUIMIENTO (Solo si no eres el autor) -->
                     @if(auth()->check() && auth()->id() !== $story->user_id)
                         <div class="mt-8 flex justify-center md:justify-start">
                             <form action="{{ route('stories.follow', $story) }}" method="POST">
                                 @csrf
                                 @if(auth()->user()->followedStories->contains($story->id))
-                                    <!-- Botón: Dejar de seguir -->
                                     <button type="submit" class="px-6 py-2.5 bg-white/20 text-white font-bold rounded-full hover:bg-red-500/80 transition-all backdrop-blur-sm border border-white/50 flex items-center gap-2 shadow-sm">
                                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
                                         Siguiendo
                                     </button>
                                 @else
-                                    <!-- Botón: Seguir -->
                                     <button type="submit" class="px-6 py-2.5 bg-white text-[#744E36] font-black rounded-full hover:bg-gray-100 transition-all shadow-lg flex items-center gap-2 transform hover:-translate-y-0.5">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                                         Seguir Historia
@@ -71,6 +68,13 @@
                     @endif
                 </div>
             </div>
+
+            <!-- Pre-calculamos los volúmenes aquí arriba para poder usarlos en el Modal y en el Índice -->
+            @php
+                $groupedChapters = $story->chapters->groupBy(function($chapter) {
+                    return $chapter->volume_title ?: 'Capítulos Generales';
+                });
+            @endphp
 
             <!-- Contenido Principal: Dos Columnas -->
             <div class="flex flex-col lg:flex-row gap-8">
@@ -106,14 +110,14 @@
                                     Editar Obra y Sinopsis
                                 </a>
 
-                                <!-- NUEVO: Configuración de Monetización -->
-                                <a href="#" onclick="alert('Módulo Freemium en desarrollo. Aquí podrás establecer el precio individual de cada capítulo o cobrar por volúmenes enteros.'); return false;" class="flex items-center justify-center w-full px-4 py-3 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold rounded-xl shadow-md hover:from-emerald-600 hover:to-green-700 transition-colors gap-2">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    Monetizar Capítulos
-                                </a>
-
-                                <!-- Lógica de Venta Completa en Tienda -->
                                 @if($story->chapters()->count() > 0)
+                                    <!-- Botón Monetizar Volumen -->
+                                    <button type="button" onclick="document.getElementById('monetizeModal').classList.remove('hidden')" class="flex items-center justify-center w-full px-4 py-3 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold rounded-xl shadow-md hover:from-emerald-600 hover:to-green-700 transition-colors gap-2">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        Monetizar Volumen
+                                    </button>
+
+                                    <!-- Botón Vender en Tienda -->
                                     <div class="pt-4 border-t border-[#744E36]/20 mt-4">
                                         <button type="button" onclick="document.getElementById('publishModal').classList.remove('hidden')" class="flex items-center justify-center w-full px-4 py-3 bg-gradient-to-r from-amber-500 to-yellow-500 text-white font-bold rounded-xl shadow-md hover:from-amber-600 hover:to-yellow-600 transition-colors gap-2">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
@@ -121,7 +125,7 @@
                                         </button>
                                     </div>
 
-                                    <!-- MODAL DE PUBLICACIÓN EN TIENDA -->
+                                    <!-- Modal de publicacion en tienda -->
                                     <div id="publishModal" class="hidden fixed inset-0 z-[100] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
                                         <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
                                             <div class="fixed inset-0 transition-opacity bg-gray-900 bg-opacity-75 backdrop-blur-sm" aria-hidden="true" onclick="document.getElementById('publishModal').classList.add('hidden')"></div>
@@ -180,6 +184,65 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <!-- Modal de monetizar volumen -->
+                                    <div id="monetizeModal" class="hidden fixed inset-0 z-[100] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                                        <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                                            <div class="fixed inset-0 transition-opacity bg-gray-900 bg-opacity-75 backdrop-blur-sm" aria-hidden="true" onclick="document.getElementById('monetizeModal').classList.add('hidden')"></div>
+                                            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                                            <div class="inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-3xl shadow-2xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-8 relative z-10 border border-gray-100">
+                                                <form action="{{ route('stories.monetize', $story) }}" method="POST">
+                                                    @csrf
+                                                    <div class="flex items-center justify-center w-16 h-16 mx-auto bg-emerald-100 rounded-full mb-6 shadow-inner">
+                                                        <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                    </div>
+                                                    
+                                                    <div class="text-center">
+                                                        <h3 class="text-2xl font-black leading-6 text-gray-900" id="modal-title" style="font-family: 'Instrument Sans', sans-serif;">
+                                                            Monetizar Volumen
+                                                        </h3>
+                                                        <p class="text-sm text-gray-500 mt-3 leading-relaxed">
+                                                            Elige un volumen de tu historia y ponle un precio. El sistema actualizará el coste de <strong class="text-gray-900">todos los capítulos</strong> de ese bloque de forma automática.
+                                                        </p>
+                                                    </div>
+
+                                                    <div class="mt-8 space-y-6">
+                                                        <div>
+                                                            <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">Selecciona el Volumen</label>
+                                                            <select name="volume_name" class="focus:ring-emerald-500 focus:border-emerald-500 block w-full px-4 py-3 sm:text-base border-gray-200 rounded-xl font-bold text-gray-700 bg-gray-50 transition-colors cursor-pointer" required>
+                                                                @foreach($groupedChapters->keys() as $volumeName)
+                                                                    <option value="{{ $volumeName }}">{{ $volumeName }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+
+                                                        <div>
+                                                            <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">Precio (Por Capítulo)</label>
+                                                            <div class="relative rounded-xl shadow-sm">
+                                                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                                                    <span class="text-gray-500 font-black sm:text-lg">€</span>
+                                                                </div>
+                                                                <input type="number" name="price" step="0.01" min="0" value="0.50" class="focus:ring-emerald-500 focus:border-emerald-500 block w-full pl-10 pr-4 py-3 sm:text-lg border-gray-200 rounded-xl font-black text-gray-900 bg-gray-50 transition-colors" required>
+                                                            </div>
+                                                            <p class="text-xs text-gray-400 mt-2 font-medium">Ejemplo: Si pones 0.50€, todos los capítulos de este volumen costarán cincuenta céntimos cada uno.</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mt-10 sm:flex sm:flex-row-reverse gap-3">
+                                                        <button type="submit" class="w-full inline-flex justify-center items-center rounded-full border border-transparent px-8 py-3 bg-gradient-to-r from-emerald-500 to-green-600 text-base font-bold text-white shadow-md hover:from-emerald-600 hover:to-green-700 sm:w-auto sm:text-sm transition-all transform hover:-translate-y-0.5">
+                                                            Actualizar Precios
+                                                        </button>
+                                                        <button type="button" onclick="document.getElementById('monetizeModal').classList.add('hidden')" class="mt-3 w-full inline-flex justify-center items-center rounded-full border border-gray-200 px-8 py-3 bg-white text-base font-bold text-gray-600 shadow-sm hover:bg-gray-50 hover:text-gray-900 sm:mt-0 sm:w-auto sm:text-sm transition-colors">
+                                                            Cancelar
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- FIN DEL MODAL DE MONETIZAR -->
+
                                 @endif
                             </div>
                         </div>
@@ -221,14 +284,8 @@
                                        class="w-full pl-11 pr-4 py-3 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:border-[#744E36] focus:ring-[#744E36] transition-colors text-sm font-medium text-gray-800 placeholder-gray-400">
                             </div>
 
-                            <!-- LÓGICA DE AGRUPACIÓN POR VOLÚMENES -->
-                            @php
-                                $groupedChapters = $story->chapters->groupBy(function($chapter) {
-                                    return $chapter->volume_title ?: 'Capítulos Generales';
-                                });
-                            @endphp
-
                             <div class="space-y-6" id="chaptersContainer">
+                                <!-- USAMOS LA VARIABLE $groupedChapters QUE DECLARAMOS AL PRINCIPIO DEL ARCHIVO -->
                                 @foreach($groupedChapters as $volumeName => $chapters)
                                     <!-- Acordeón HTML Nativo -->
                                     <details class="volume-group group" open>
@@ -245,11 +302,8 @@
                                         <div class="mt-4 space-y-3 pl-2 sm:pl-4">
                                             @foreach($chapters as $index => $chapter)
                                                 @php
-                                                    // NUEVA LÓGICA DE MONETIZACIÓN VISUAL (Para el TFG)
-                                                    // Detectamos si el capítulo tiene un precio configurado.
-                                                    $isPremium = isset($chapter->price) && $chapter->price > 0;
-                                                    // En el futuro, aquí comprobarás si el usuario actual ya compró este capítulo específico.
-                                                    $userOwnsChapter = false; 
+                                                    $isPremium = $chapter->price > 0;
+                                                    $userOwnsChapter = auth()->check() ? auth()->user()->purchasedChapters->contains($chapter->id) : false; 
                                                     $isAuthor = auth()->check() && auth()->id() === $story->user_id;
                                                 @endphp
 
@@ -268,7 +322,7 @@
                                                             <h4 class="text-base font-bold text-gray-900 group-hover/item:text-[#744E36] transition-colors flex items-center gap-2">
                                                                 {{ $chapter->title }}
                                                                 @if($isPremium)
-                                                                    <span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-[10px] uppercase tracking-wider rounded font-bold">Premium</span>
+                                                                    <span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-[10px] uppercase tracking-wider rounded font-bold">Premium ({{ number_format($chapter->price, 2) }}€)</span>
                                                                 @endif
                                                             </h4>
                                                             <p class="text-[11px] text-gray-400 mt-1 font-bold uppercase tracking-widest flex items-center gap-1">
@@ -288,10 +342,13 @@
                                                         
                                                         <!-- LÓGICA DE BOTONES LECTURA / COMPRA -->
                                                         @if($isPremium && !$userOwnsChapter && !$isAuthor)
-                                                            <!-- Botón de Comprar Capítulo -->
-                                                            <a href="#" onclick="alert('Funcionalidad de Micro-Pagos. Te llevará a comprar este capítulo por {{ number_format($chapter->price, 2) }}€'); return false;" class="px-4 py-2 rounded-full bg-amber-500 text-white text-xs font-bold hover:bg-amber-600 transition-colors flex items-center gap-2 shadow-sm">
-                                                                Desbloquear {{ number_format($chapter->price, 2) }}€
-                                                            </a>
+                                                            <!-- Botón de Comprar Capítulo REAL -->
+                                                            <form action="{{ route('chapters.buy', $chapter) }}" method="POST" class="m-0">
+                                                                @csrf
+                                                                <button type="submit" class="px-4 py-2 rounded-full bg-amber-500 text-white text-xs font-bold hover:bg-amber-600 transition-colors flex items-center gap-2 shadow-sm">
+                                                                    Desbloquear {{ number_format($chapter->price, 2) }}€
+                                                                </button>
+                                                            </form>
                                                         @else
                                                             <!-- Botón Leer Normal -->
                                                             <a href="{{ route('stories.chapters.show', [$story, $chapter]) }}" class="px-4 py-2 rounded-full bg-gray-50 text-gray-600 text-xs font-bold hover:bg-[#744E36] hover:text-white transition-colors flex items-center gap-2 shadow-sm border border-transparent">

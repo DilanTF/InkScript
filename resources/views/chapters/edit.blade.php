@@ -26,15 +26,25 @@
                                class="block w-full border-gray-200 bg-gray-50 focus:bg-white focus:border-[#744E36] focus:ring-[#744E36] rounded-xl shadow-sm px-6 py-4 text-xl font-semibold transition-colors text-gray-900" required>
                     </div>
 
-                    <!-- NUEVA FILA: Volumen y Precio -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        <!-- CAMPO DEL VOLUMEN -->
+                        <!-- CAMPO DEL VOLUMEN (AHORA CON DATALIST HÍBRIDO) -->
                         <div>
                             <label class="block font-bold text-sm uppercase tracking-wider mb-2" style="color: #744E36;">
                                 Volumen / Arco (Opcional)
                             </label>
-                            <input type="text" name="volume_title" value="{{ old('volume_title', $chapter->volume_title) }}" placeholder="Ej: Volumen 1"
-                                   class="w-full border-gray-200 rounded-xl focus:ring-[#744E36] focus:border-[#744E36] px-4 py-3 bg-gray-50 focus:bg-white transition-colors">
+                            
+                            <!-- El input enlaza con el datalist a través del atributo "list" -->
+                            <input list="existing-volumes" type="text" name="volume_title" value="{{ old('volume_title', $chapter->volume_title) }}" placeholder="Ej: Volumen 1" autocomplete="off"
+                                   class="w-full border-gray-200 rounded-xl focus:ring-[#744E36] focus:border-[#744E36] px-4 py-3 bg-gray-50 focus:bg-white transition-colors cursor-pointer">
+                            
+                            <!-- Opciones precargadas de la base de datos -->
+                            <datalist id="existing-volumes">
+                                @foreach($existingVolumes as $vol)
+                                    <option value="{{ $vol }}">
+                                @endforeach
+                            </datalist>
+
+                            <p class="text-xs text-gray-500 mt-2 font-medium">Haz clic para elegir uno existente o teclea para crear uno nuevo.</p>
                         </div>
 
                         <!-- CAMPO DEL PRECIO -->
@@ -49,17 +59,14 @@
                                 <input type="number" name="price" value="{{ old('price', $chapter->price ?? '0.00') }}" step="0.01" min="0"
                                        class="w-full border-gray-200 rounded-xl focus:ring-[#744E36] focus:border-[#744E36] pl-10 pr-4 py-3 bg-gray-50 focus:bg-white transition-colors">
                             </div>
-                            <p class="text-[10px] text-gray-500 mt-1 font-bold">Déjalo en 0.00 para que sea gratis para todos.</p>
+                            <p class="text-xs text-gray-500 mt-2 font-medium">Déjalo en 0.00 para que sea gratis para todos.</p>
                         </div>
                     </div>
 
                     <div class="mb-10">
-                        <div class="flex items-center justify-between mb-2">
-                            <label for="content" class="block font-bold text-sm uppercase tracking-wider" style="color: #744E36;">
-                                Manuscrito
-                            </label>
-                        </div>
-                        
+                        <label for="content" class="block font-bold text-sm uppercase tracking-wider mb-2" style="color: #744E36;">
+                            Manuscrito
+                        </label>
                         <textarea name="content" id="content" rows="25"
                                   class="block w-full border-gray-200 bg-gray-50 focus:bg-white focus:border-[#744E36] focus:ring-[#744E36] rounded-2xl shadow-inner px-6 py-6 resize-y transition-colors text-gray-800 leading-loose text-lg font-serif" 
                                   style="min-height: 400px;" required>{{ old('content', $chapter->content) }}</textarea>

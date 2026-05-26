@@ -68,11 +68,11 @@ Route::get('/panel', function () {
 Route::get('/inventario', function () {
     $user = auth()->user();
     
-    // Todos los libros digitales comprados
+    // Todos los libros digitales comprados (SOLUCIÓN AL BUG)
     $inventory = \App\Models\OrderItem::with('book')
         ->whereHas('order', function($q) use ($user) {
             $q->where('user_id', $user->id)
-              ->whereIn('status', ['completed', 'completado']);
+              ->whereIn('status', ['completed', 'completado']); // <-- CORREGIDO AQUÍ
         })
         ->whereHas('book', function($q) {
             $q->where('is_digital', true);
@@ -84,7 +84,7 @@ Route::get('/inventario', function () {
     return view('inventory.index', compact('inventory'));
 })->middleware(['auth', 'verified'])->name('inventory.index');
 
-// 6. Rutas de Perfil y Carrito protegidas por Autenticación
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -116,14 +116,14 @@ Route::get('/shop/book/{book}', [BookController::class, 'show'])->name('shop.sho
 // Botón de Seguir Historia
 Route::post('/stories/{story}/follow', [StoryController::class, 'toggleFollow'])->name('stories.follow');
 
-// Comprar capítulo Premium
-Route::post('/chapters/{chapter}/buy', [\App\Http\Controllers\ChapterController::class, 'buy'])->name('chapters.buy');
-
 // La Biblioteca de la Comunidad
 Route::get('/comunidad', [CommunityController::class, 'index'])->name('community.index');
 
 // Ruta para vender una historia
 Route::post('/stories/{story}/sell', [BookController::class, 'publishAsBook'])->name('stories.sell');
+
+// NUEVA: Ruta para monetizar un volumen entero masivamente
+Route::post('/stories/{story}/monetize-volume', [StoryController::class, 'monetizeVolume'])->name('stories.monetize');
 
 // Comentarios
 Route::post('/stories/{chapter}/comments', [CommentController::class, 'store'])->name('stories.comments.store');
