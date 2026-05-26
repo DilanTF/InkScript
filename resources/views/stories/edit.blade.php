@@ -5,14 +5,14 @@
             
             <!-- Encabezado con navegación de migas de pan -->
             <div class="flex flex-col mb-8">
-                <a href="{{ route('stories.index') }}" class="text-sm font-bold hover:underline mb-3 inline-flex items-center w-max" style="color: #744E36;">
+                <a href="{{ route('stories.show', $story) }}" class="text-sm font-bold hover:underline mb-3 inline-flex items-center w-max" style="color: #744E36;">
                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    Volver a Mis Historias
+                    Volver a la Obra
                 </a>
                 <h2 class="text-4xl font-black text-gray-900" style="font-family: 'Instrument Sans', sans-serif;">
                     Configuración de la Obra
                 </h2>
-                <p class="text-gray-500 mt-2 text-lg">Modifica los detalles principales o reasigna los géneros de tu manuscrito.</p>
+                <p class="text-gray-500 mt-2 text-lg">Modifica los detalles principales, el estado o reasigna los géneros de tu manuscrito.</p>
             </div>
 
             <!-- Contenedor principal estilo tarjeta doble -->
@@ -62,7 +62,23 @@
                             @enderror
                         </div>
 
-                        <!-- Campo: Selección de Géneros (NUEVO) -->
+                        <!-- NUEVO: Campo de Estado de Publicación -->
+                        <div class="mb-8">
+                            <label for="status" class="block font-bold text-sm uppercase tracking-wider mb-3" style="color: #744E36;">
+                                Estado de Publicación
+                            </label>
+                            <select name="status" id="status" class="block w-full border-gray-200 bg-gray-50 focus:bg-white focus:border-[#744E36] focus:ring-[#744E36] rounded-xl shadow-sm px-4 py-3 text-sm font-bold transition-colors text-gray-900 cursor-pointer">
+                                <option value="En Emisión" {{ old('status', $story->status) === 'En Emisión' ? 'selected' : '' }}>En Emisión (Publicando capítulos)</option>
+                                <option value="Pausada" {{ old('status', $story->status) === 'Pausada' ? 'selected' : '' }}>Pausada temporalmente</option>
+                                <option value="Finalizada" {{ old('status', $story->status) === 'Finalizada' ? 'selected' : '' }}>Obra Finalizada</option>
+                            </select>
+                            <p class="text-xs text-gray-500 mt-2 font-medium">Este estado será visible para todos los lectores en la Comunidad.</p>
+                            @error('status')
+                                <span class="text-red-500 text-xs font-bold mt-2 block">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Campo: Selección de Géneros -->
                         <div class="mb-8">
                             <label class="block font-bold text-sm uppercase tracking-wider mb-3" style="color: #744E36;">
                                 Modificar Categorías / Géneros
@@ -98,7 +114,7 @@
 
                         <!-- Botones de Acción -->
                         <div class="flex items-center justify-end pt-6 border-t border-gray-100">
-                            <a href="{{ route('stories.index') }}" class="mr-6 text-sm font-bold text-gray-400 hover:text-gray-800 transition-colors">
+                            <a href="{{ route('stories.show', $story) }}" class="mr-6 text-sm font-bold text-gray-400 hover:text-gray-800 transition-colors">
                                 Cancelar
                             </a>
                             <button type="submit" class="px-8 py-3 text-white font-bold rounded-full shadow-md transition-all transform hover:-translate-y-1 hover:shadow-lg text-sm uppercase tracking-wider flex items-center gap-2" style="background-color: #744E36;" onmouseover="this.style.backgroundColor='#5c3d2a'" onmouseout="this.style.backgroundColor='#744E36'">
