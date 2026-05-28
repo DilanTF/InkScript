@@ -80,7 +80,7 @@
                     </h2>
                     <div class="space-y-4">
                         @forelse($recommendedBooks as $book)
-                            <a href="{{ route('shop.show', $book->id) }}" class="block bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow group flex items-center gap-6">
+                            <a href="{{ route('shop.show', $book->id) }}" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow group flex items-center gap-6">
                                 <!-- Imagen miniatura -->
                                 <div class="w-20 h-28 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 shadow-sm border border-gray-200">
                                     <img src="{{ $book->cover_url }}" alt="{{ $book->title }}" class="w-full h-full object-cover">
@@ -105,9 +105,9 @@
                     </h2>
                     <div class="space-y-4">
                         @forelse($freeStories as $story)
-                            <a href="{{ route('stories.show', $story->id) }}" class="block bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow group flex items-center gap-6">
+                            <a href="{{ route('stories.show', $story->id) }}" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow group flex items-center gap-6">
                                 <!-- Imagen/Icono miniatura -->
-                                <<div class="w-20 h-28 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 shadow-sm border border-gray-200">
+                                <div class="w-20 h-28 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 shadow-sm border border-gray-200">
                                     <img src="{{ $story->cover_url }}" alt="{{ $story->title }}" class="w-full h-full object-cover">
                                 </div>
                                 <!-- Datos -->
