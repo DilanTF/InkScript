@@ -30,20 +30,16 @@
                     @forelse($featuredBooks as $book)
                         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-shadow duration-300 group flex flex-col">
                             <!-- Imagen del libro -->
-                            <div class="h-56 bg-gray-100 relative overflow-hidden flex items-center justify-center">
-                                @if($book->image)
-                                    <img src="{{ asset('storage/' . $book->image) }}" alt="{{ $book->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                                @else
-                                    <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#744E36] to-[#5c3d2a] text-white p-4">
-                                        <span class="font-black text-center uppercase tracking-widest opacity-80">{{ $book->title }}</span>
+                            <div class="h-48 bg-gray-100 relative overflow-hidden rounded-t-3xl flex items-center justify-center">
+                                <img src="{{ $book->cover_url }}" alt="{{ $book->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                @if($book->genre)
+                                    <div class="absolute top-3 left-3">
+                                        <span class="px-3 py-1 bg-white/90 backdrop-blur-sm text-[10px] font-black uppercase tracking-wider rounded-full shadow-sm text-[#744E36]">
+                                            {{ explode(', ', $book->genre)[0] }}
+                                        </span>
                                     </div>
                                 @endif
-                                <!-- Etiqueta de género flotante -->
-                                <span class="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm text-xs font-black uppercase tracking-wider rounded-full" style="color: #744E36;">
-                                    {{ $book->genre ?: 'Ficción' }}
-                                </span>
                             </div>
-                            
                             <!-- Datos del libro -->
                             <div class="p-6 flex flex-col flex-grow justify-between">
                                 <div>
@@ -74,7 +70,7 @@
                 </div>
             </section>
 
-            <!-- 2. SECCIÓN DIVIDIDA: Recomendaciones vs Historias Gratuitas -->
+            <!-- 2. Seccion dividida: Recomendaciones vs Historias Gratuitas -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
                 
                 <!-- Columna Izquierda: Recomendaciones para ti -->
@@ -86,18 +82,12 @@
                         @forelse($recommendedBooks as $book)
                             <a href="{{ route('shop.show', $book->id) }}" class="block bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow group flex items-center gap-6">
                                 <!-- Imagen miniatura -->
-                                <div class="w-20 h-28 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
-                                    @if($book->image)
-                                        <img src="{{ asset('storage/' . $book->image) }}" class="w-full h-full object-cover">
-                                    @else
-                                        <div class="w-full h-full bg-[#744E36] flex items-center justify-center opacity-80">
-                                            <svg class="w-8 h-8 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                                        </div>
-                                    @endif
+                                <div class="w-20 h-28 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 shadow-sm border border-gray-200">
+                                    <img src="{{ $book->cover_url }}" alt="{{ $book->title }}" class="w-full h-full object-cover">
                                 </div>
                                 <!-- Datos -->
                                 <div>
-                                    <h4 class="font-bold text-lg text-gray-900 group-hover:text-[#744E36] transition-colors">{{ $book->title }}</h4>
+                                    <h4 class="font-semibold text-lg text-gray-900 group-hover:text-[#744E36] transition-colors">{{ $book->title }}</h4>
                                     <p class="text-xs font-bold uppercase tracking-wider text-gray-400 mt-1">{{ $book->genre ?: 'Aventura' }}</p>
                                     <p class="text-lg font-black text-gray-900 mt-2">{{ number_format($book->price, 2) }} €</p>
                                 </div>
@@ -117,12 +107,12 @@
                         @forelse($freeStories as $story)
                             <a href="{{ route('stories.show', $story->id) }}" class="block bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow group flex items-center gap-6">
                                 <!-- Imagen/Icono miniatura -->
-                                <div class="w-20 h-28 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center border border-gray-200">
-                                    <img src="{{ asset('images/InkScript.png') }}" class="w-12 h-12 object-contain opacity-50 grayscale group-hover:grayscale-0 transition-all">
+                                <<div class="w-20 h-28 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 shadow-sm border border-gray-200">
+                                    <img src="{{ $story->cover_url }}" alt="{{ $story->title }}" class="w-full h-full object-cover">
                                 </div>
                                 <!-- Datos -->
                                 <div class="flex-grow">
-                                    <h4 class="font-bold text-lg text-gray-900 group-hover:text-[#744E36] transition-colors">{{ $story->title }}</h4>
+                                    <h4 class="font-semibold text-lg text-gray-900 group-hover:text-[#744E36] transition-colors">{{ $story->title }}</h4>
                                     <p class="text-sm text-gray-500 mt-1">Por <span class="font-bold">{{ $story->user->name ?? 'Anónimo' }}</span></p>
                                     <div class="mt-3 flex items-center gap-2">
                                         <span class="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-black uppercase rounded">Gratis</span>
@@ -139,7 +129,7 @@
 
             </div>
 
-            <!-- 3. TUS HISTORIAS -->
+            <!-- 3. Historias del autor-->
             @if(auth()->user()->role === 'author')
             <section class="pt-8 border-t border-gray-200">
                 <div class="flex items-center justify-between mb-6">
@@ -159,7 +149,7 @@
                         @foreach($myStories as $story)
                             <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between hover:border-[#744E36] transition-colors">
                                 <div>
-                                    <h3 class="font-bold text-lg text-gray-900 mb-2">{{ $story->title }}</h3>
+                                    <h3 class="font-semibold text-lg text-gray-900 mb-2">{{ $story->title }}</h3>
                                     <p class="text-xs text-gray-500 line-clamp-3">{{ $story->description }}</p>
                                 </div>
                                 <div class="mt-4 pt-4 border-t border-gray-50 flex justify-between items-center">

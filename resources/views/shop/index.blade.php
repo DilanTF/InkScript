@@ -85,35 +85,27 @@
                             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all flex flex-col group transform hover:-translate-y-1">
                                 <!-- Portada -->
                                 <div class="h-64 bg-gray-100 relative overflow-hidden flex items-center justify-center">
-                                    @if($book->image)
-                                        <img src="{{ asset('storage/' . $book->image) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+    
+                                <img src="{{ $book->cover_url }}" alt="{{ $book->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                
+                                <div class="absolute top-3 left-3 flex flex-col gap-2">
+                                    @if($book->is_digital)
+                                        <span class="px-2 py-1 bg-white/90 backdrop-blur-sm text-[9px] font-black uppercase tracking-wider rounded shadow-sm text-indigo-700">Digital</span>
                                     @else
-                                        <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#744E36] to-[#5c3d2a] text-white p-4 relative">
-                                            <svg class="absolute right-0 bottom-0 text-white opacity-10 w-24 h-24 transform translate-x-4 translate-y-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                                            <span class="font-black text-center uppercase tracking-widest text-sm z-10" style="font-family: 'Instrument Sans', sans-serif;">{{ $book->title }}</span>
-                                        </div>
+                                        <span class="px-2 py-1 bg-white/90 backdrop-blur-sm text-[9px] font-black uppercase tracking-wider rounded shadow-sm text-[#744E36]">Físico</span>
                                     @endif
-                                    
-                                    <!-- Etiquetas Superiores (Formato) -->
-                                    <div class="absolute top-3 left-3 flex flex-col gap-2">
-                                        @if($book->is_digital)
-                                            <span class="px-2 py-1 bg-white/90 backdrop-blur-sm text-[9px] font-black uppercase tracking-wider rounded shadow-sm text-indigo-700">Digital</span>
-                                        @else
-                                            <span class="px-2 py-1 bg-white/90 backdrop-blur-sm text-[9px] font-black uppercase tracking-wider rounded shadow-sm text-[#744E36]">Físico</span>
-                                        @endif
-                                    </div>
-                                    
-                                    <!-- Etiqueta de Origen (Editorial o Indie) -->
-                                    <div class="absolute bottom-3 right-3 flex flex-col gap-2">
-                                        @if($book->user_id)
-                                            <span class="px-2 py-1 bg-amber-500/90 backdrop-blur-sm text-[9px] font-black uppercase tracking-wider rounded shadow-sm text-white flex items-center gap-1">
-                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                                Indie
-                                            </span>
-                                        @endif
-                                    </div>
                                 </div>
                                 
+                                <div class="absolute bottom-3 right-3 flex flex-col gap-2">
+                                    @if($book->user_id)
+                                        <span class="px-2 py-1 bg-amber-500/90 backdrop-blur-sm text-[9px] font-black uppercase tracking-wider rounded shadow-sm text-white flex items-center gap-1">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                            Indie
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                                                            
                                 <!-- Info -->
                                 <div class="p-5 flex flex-col flex-grow justify-between">
                                     <div>

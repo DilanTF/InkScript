@@ -40,4 +40,15 @@ class Story extends Model
     {
         return $this->belongsToMany(User::class, 'story_user')->withTimestamps();
     }
+
+    /**
+     * Accesor para obtener la ruta completa de la portada con fallback.
+     */
+    public function getCoverUrlAttribute()
+    {
+        // Si el libro tiene imagen en la BD, sacarla de storage, si no, usar la por defecto de public
+        return $this->image 
+            ? asset('storage/' . $this->image) 
+            : asset('images/story.png');
+    }
 }

@@ -122,7 +122,7 @@ Route::get('/comunidad', [CommunityController::class, 'index'])->name('community
 // Ruta para vender una historia
 Route::post('/stories/{story}/sell', [BookController::class, 'publishAsBook'])->name('stories.sell');
 
-// NUEVA: Ruta para monetizar un volumen entero masivamente
+// Ruta para monetizar un volumen entero masivamente
 Route::post('/stories/{story}/monetize-volume', [StoryController::class, 'monetizeVolume'])->name('stories.monetize');
 
 // Comentarios

@@ -44,4 +44,23 @@ class Book extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
+
+    /**
+     * Accesor para obtener la ruta de la portada con lógica condicional.
+     */
+    public function getCoverUrlAttribute()
+    {
+        // 1. Si el libro tiene una imagen real subida en la base de datos, mostramos esa.
+        if ($this->image) {
+            return asset('storage/' . $this->image);
+        }
+
+        // 2. Si NO tiene imagen, pero TIENE autor (Es un libro Indie de un usuario):
+        if ($this->user_id) {
+            return asset('images/story.png');
+        }
+
+        // 3. Si NO tiene imagen y NO tiene autor (Es un libro oficial del Sello InkScript):
+        return asset('images/book.png');
+    }
 }
