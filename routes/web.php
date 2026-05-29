@@ -128,4 +128,16 @@ Route::post('/stories/{story}/monetize-volume', [StoryController::class, 'moneti
 // Comentarios
 Route::post('/stories/{chapter}/comments', [CommentController::class, 'store'])->name('stories.comments.store');
 
+Route::post('/chapters/{chapter}/buy', function(\App\Models\Chapter $chapter) {
+    // 1. Insertamos la compra real en la tabla pivot de la base de datos
+    DB::table('chapter_user')->insertOrIgnore([
+        'user_id' => Auth::id(),
+        'chapter_id' => $chapter->id,
+        'created_at' => now(),
+        'updated_at' => now()
+    ]);
+
+    // 2. Recargamos la página con un mensaje de éxito
+    return back()->with('status', '¡Capítulo comprado y desbloqueado con éxito!');
+})->name('chapters.buy');
 require __DIR__.'/auth.php';

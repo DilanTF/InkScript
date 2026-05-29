@@ -65,8 +65,17 @@ class ChapterController extends Controller
 
         $chapter->load('comments.user');
         
-        $previousChapter = $story->chapters()->where('id', '<', $chapter->id)->orderBy('id', 'desc')->first();
-        $nextChapter = $story->chapters()->where('id', '>', $chapter->id)->orderBy('id', 'asc')->first();
+        // Buscar el capítulo anterior (el que tenga un order_number menor, ordenado de mayor a menor)
+        $previousChapter = \App\Models\Chapter::where('story_id', $story->id)
+                            ->where('order_number', '<', $chapter->order_number)
+                            ->orderBy('order_number', 'desc')
+                            ->first();
+
+        // Buscar el capítulo siguiente (el que tenga un order_number mayor)
+        $nextChapter = \App\Models\Chapter::where('story_id', $story->id)
+                            ->where('order_number', '>', $chapter->order_number)
+                            ->orderBy('order_number', 'asc')
+                            ->first();
         
         return view('chapters.show', compact('story', 'chapter', 'previousChapter', 'nextChapter'));
     }
